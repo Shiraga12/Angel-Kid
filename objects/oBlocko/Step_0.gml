@@ -1,0 +1,2 @@
+STATE();
+event_inherited();

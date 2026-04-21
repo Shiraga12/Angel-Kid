@@ -1,0 +1,47 @@
+{
+  "$GMObject":"",
+  "%Name":"oMollyWopWally",
+  "eventList":[
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+  ],
+  "managed":true,
+  "name":"oMollyWopWally",
+  "overriddenProperties":[
+    {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"oNPCTemplate","path":"objects/oNPCTemplate/oNPCTemplate.yy",},"propertyId":{"name":"STATIC","path":"objects/oNPCTemplate/oNPCTemplate.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"False",},
+  ],
+  "parent":{
+    "name":"Molly Wop Wally",
+    "path":"folders/NPCS/Enemies/Molly Wop Wally.yy",
+  },
+  "parentObjectId":{
+    "name":"oEnemyTemplate",
+    "path":"objects/oEnemyTemplate/oEnemyTemplate.yy",
+  },
+  "persistent":false,
+  "physicsAngularDamping":0.1,
+  "physicsDensity":0.5,
+  "physicsFriction":0.2,
+  "physicsGroup":1,
+  "physicsKinematic":false,
+  "physicsLinearDamping":0.1,
+  "physicsObject":false,
+  "physicsRestitution":0.1,
+  "physicsSensor":false,
+  "physicsShape":1,
+  "physicsShapePoints":[],
+  "physicsStartAwake":true,
+  "properties":[],
+  "resourceType":"GMObject",
+  "resourceVersion":"2.0",
+  "solid":false,
+  "spriteId":{
+    "name":"sMollyWopWally_Idle_5",
+    "path":"sprites/sMollyWopWally_Idle_5/sMollyWopWally_Idle_5.yy",
+  },
+  "spriteMaskId":{
+    "name":"sMollyWopWally_Idle_5",
+    "path":"sprites/sMollyWopWally_Idle_5/sMollyWopWally_Idle_5.yy",
+  },
+  "visible":true,
+}

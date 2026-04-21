@@ -1,0 +1,3 @@
+VSP = 2;
+GRV = 0.2;
+ATTACK_POWER = 1;

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"fonts",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"fonts",
+  "parent":{
+    "name":"HUD",
+    "path":"folders/HUD.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
