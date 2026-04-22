@@ -14,22 +14,10 @@ COLLISIONS = [
     layer_tilemap_get_id("tmSOLID")
 ];
 
-HSP = 0;
-VSP = 0;
-GRV = 0.45;
-STATIC = false;
-
 facing = 1;
 stateTimer = 0;
 HP = 1;
 isDefeated = false;
-
-setSTATE = function(_state) {
-    if (STATE != _state) {
-        STATE = _state;
-        image_index = 0;
-    }
-};
 
 takeHit = method(id, function(_power, _sourceX) {
     if (isDefeated) {
@@ -48,7 +36,6 @@ takeHit = method(id, function(_power, _sourceX) {
         setSTATE(stateDEFEAT);
     }
 });
-
 willCrash = function() {
     var wallAhead = place_meeting(x + (facing * 8), y, COLLISIONS);
     var floorAhead = place_meeting(x + (facing * EDGE_CHECK), y + 12, COLLISIONS);
@@ -56,6 +43,13 @@ willCrash = function() {
     return wallAhead || !floorAhead;
 };
 
+
+setSTATE = function(_state) {
+    if (STATE != _state) {
+        STATE = _state;
+        image_index = 0;
+    }
+};
 stateDASH = function() {
     if (sprite_index != SPRITES.DASH) {
         sprite_index = SPRITES.DASH;
@@ -69,6 +63,8 @@ stateDASH = function() {
         stateTimer = CRASH_TIME;
         setSTATE(stateDEFEAT);
     }
+
+    move_and_collide(HSP, VSP, COLLISIONS);
 };
 stateDEFEAT = function() {
     if (!isDefeated) {
@@ -84,13 +80,23 @@ stateDEFEAT = function() {
 
     image_xscale = facing;
 
+    VSP += GRV;
+    HSP = lerp(HSP, 0, 0.14);
+    move_and_collide(HSP, VSP, COLLISIONS);
+
+    if (VSP >= 0 && place_meeting(x, y + 2, COLLISIONS)) {
+        HSP = 0;
+        VSP = 0;
+        stateTimer -= 1;
+
+        if (stateTimer <= 0) {
+            instance_destroy();
+        }
+    }
+
     if (y > room_height + sprite_height) {
         instance_destroy();
     }
-
-    x += HSP;
-    y += VSP;
-    VSP += GRV;
 };
 
 STATE = stateDASH;

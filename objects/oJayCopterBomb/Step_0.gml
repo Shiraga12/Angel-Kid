@@ -1,7 +1,10 @@
 VSP += GRV;
 y += VSP;
 
-if (place_meeting(x, y, oPlayer)) {
+var player = instance_place(x, y, oPlayer);
+if (player != noone && variable_instance_exists(player, "takeDamage")) {
+    var takeDamageMethod = variable_instance_get(player, "takeDamage");
+    takeDamageMethod(ATTACK_POWER, x);
     instance_destroy();
 }
 

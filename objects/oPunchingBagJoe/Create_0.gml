@@ -1,5 +1,8 @@
 event_inherited();
 
+BOSS_NAME = "Punching Bag Joe";
+BOSS_SUBTITLE = "Tutorial Island Boss";
+
 SPRITES = {
     IDLE: PBJ_Idle_7,
     PROJECTILE: PBJ_Attack_move_1,
@@ -15,17 +18,25 @@ SPRITES = {
 
 MOVE_SPEED = 1.4;
 AIR_SPEED = 3.25;
-DASH_SPEED = 4.25;
+DASH_SPEED = 4.5;
 JUMP_SPEED = 8.25;
 HIT_TIME = 10;
 ATTACK_COOLDOWN = 24;
+INTRO_TIME = 75;
+PHASE_CHANGE_TIME = 40;
+VICTORY_TIME = 90;
 ARENA_RANGE = 220;
+ARENA_TRIGGER_RANGE = 150;
 AGGRO_RANGE = 260;
 JAB_RANGE = 44;
 UPPERCUT_RANGE = 34;
 DASH_RANGE = 160;
 GROUND_POUND_RANGE = 88;
 PROJECTILE_RANGE = 128;
+ARENA_WALL_MARGIN = 36;
+ARENA_WALL_WIDTH = 20;
+UI_BAR_WIDTH = 360;
+MAX_PHASE = 3;
 
 ATTACK_POWER = {
     PROJECTILE: 1,
@@ -35,9 +46,15 @@ ATTACK_POWER = {
     GROUND_POUND: 2
 };
 
+var bossWallObject = asset_get_index("oBossArenaWall");
+
 COLLISIONS = [
     layer_tilemap_get_id("tmSOLID")
 ];
+
+if (bossWallObject != -1) {
+    array_push(COLLISIONS, bossWallObject);
+}
 
 HSP = 0;
 VSP = 0;
@@ -50,12 +67,24 @@ facing = 1;
 homeX = x;
 attackCooldown = ATTACK_COOLDOWN;
 attackApplied = false;
+attackPattern = 0;
 stateTimer = 0;
 dashDistance = 0;
 jumpCommitted = false;
 jumpTargetX = x;
 defeatStarted = false;
 isDefeated = false;
+encounterStarted = false;
+introComplete = false;
+encounterCleared = false;
+arenaLocked = false;
+phase = 1;
+bannerText = "";
+bannerTimer = 0;
+uiAlpha = 0;
+uiTargetAlpha = 0;
+leftWallId = noone;
+rightWallId = noone;
 
 setSTATE = function(_state) {
     if (STATE != _state) {
@@ -63,6 +92,26 @@ setSTATE = function(_state) {
         image_index = 0;
         image_speed = 1;
         attackApplied = false;
+    }
+};
+
+setAttackCooldown = function(_base) {
+    attackCooldown = max(8, _base - ((phase - 1) * 4));
+};
+
+showBanner = function(_text, _time) {
+    bannerText = _text;
+    bannerTimer = _time;
+};
+
+getPhaseLabel = function() {
+    switch (phase) {
+        case 1:
+            return "Warm Up";
+        case 2:
+            return "Short Fuse";
+        default:
+            return "Meltdown";
     }
 };
 
@@ -88,6 +137,104 @@ faceTarget = function(_target) {
     }
 };
 
+createArenaWall = function(_wallX) {
+    if (bossWallObject == -1) {
+        return noone;
+    }
+
+    var wall = instance_create_layer(_wallX, room_height * 0.5, layer, bossWallObject);
+    variable_instance_set(wall, "wallWidth", ARENA_WALL_WIDTH);
+    variable_instance_set(wall, "wallHeight", room_height + 64);
+    return wall;
+};
+
+lockArena = function() {
+    if (arenaLocked) {
+        return;
+    }
+
+    arenaLocked = true;
+    leftWallId = createArenaWall(homeX - ARENA_RANGE - ARENA_WALL_MARGIN);
+    rightWallId = createArenaWall(homeX + ARENA_RANGE + ARENA_WALL_MARGIN);
+};
+
+unlockArena = function() {
+    arenaLocked = false;
+
+    if (instance_exists(leftWallId)) {
+        with (leftWallId) {
+            instance_destroy();
+        }
+    }
+
+    if (instance_exists(rightWallId)) {
+        with (rightWallId) {
+            instance_destroy();
+        }
+    }
+
+    leftWallId = noone;
+    rightWallId = noone;
+};
+
+releaseFinalCages = function() {
+    with (oFinalCage) {
+        if (variable_instance_exists(id, "openCage")) {
+            openCage();
+        }
+    }
+};
+
+getTargetPhase = function() {
+    var hpRatio = HP / MAX_HP;
+
+    if (hpRatio <= 0.34) {
+        return 3;
+    }
+
+    if (hpRatio <= 0.67) {
+        return 2;
+    }
+
+    return 1;
+};
+
+beginPhaseShift = function(_phase) {
+    phase = clamp(_phase, 1, MAX_PHASE);
+    HSP = 0;
+    VSP = 0;
+    stateTimer = PHASE_CHANGE_TIME;
+    showBanner(getPhaseLabel(), PHASE_CHANGE_TIME);
+    setAttackCooldown(ATTACK_COOLDOWN + 10);
+    setSTATE(statePHASE_CHANGE);
+};
+
+startEncounter = function() {
+    if (encounterStarted) {
+        return;
+    }
+
+    encounterStarted = true;
+    lockArena();
+    showBanner(BOSS_NAME, INTRO_TIME);
+    stateTimer = INTRO_TIME;
+    uiTargetAlpha = 1;
+    setSTATE(stateINTRO);
+};
+
+triggerDefeatSequence = function() {
+    if (encounterCleared) {
+        return;
+    }
+
+    encounterCleared = true;
+    isDefeated = true;
+    unlockArena();
+    releaseFinalCages();
+    uiTargetAlpha = 0;
+    showBanner("Victory", VICTORY_TIME);
+};
+
 applyFacingHit = function(_range, _top, _bottom, _power) {
     attackApplied = true;
 
@@ -102,16 +249,20 @@ applyFacingHit = function(_range, _top, _bottom, _power) {
         rightBound += offsetX;
     }
 
-    if (collision_rectangle(leftBound, y - _top, rightBound, y + _bottom, oPlayer, false, true) != noone) {
-        damage(_power);
+    var player = collision_rectangle(leftBound, y - _top, rightBound, y + _bottom, oPlayer, false, true);
+    if (player != noone && variable_instance_exists(player, "takeDamage")) {
+        var takeDamageMethod = variable_instance_get(player, "takeDamage");
+        takeDamageMethod(_power, x, 4.5 + ((phase - 1) * 0.3), 5 + ((phase - 1) * 0.2));
     }
 };
 
 applyRadialHit = function(_range, _top, _bottom, _power) {
     attackApplied = true;
 
-    if (collision_rectangle(x - _range, y - _top, x + _range, y + _bottom, oPlayer, false, true) != noone) {
-        damage(_power);
+    var player = collision_rectangle(x - _range, y - _top, x + _range, y + _bottom, oPlayer, false, true);
+    if (player != noone && variable_instance_exists(player, "takeDamage")) {
+        var takeDamageMethod = variable_instance_get(player, "takeDamage");
+        takeDamageMethod(_power, x, 4.75 + ((phase - 1) * 0.35), 5.5 + ((phase - 1) * 0.2));
     }
 };
 
@@ -124,7 +275,7 @@ spawnProjectile = function() {
     );
 
     variable_instance_set(projectile, "facing", facing);
-    variable_instance_set(projectile, "projectileSpeed", 4.5);
+    variable_instance_set(projectile, "projectileSpeed", 4.5 + ((phase - 1) * 0.75));
     variable_instance_set(projectile, "attackPower", ATTACK_POWER.PROJECTILE);
 };
 
@@ -134,9 +285,11 @@ chooseAttack = function() {
         return;
     }
 
+    attackPattern += 1;
+
     var distanceX = abs(player.x - x);
     var distanceY = player.y - y;
-    var enraged = HP <= ceil(MAX_HP * 0.5);
+    var pattern = attackPattern mod 4;
 
     if (distanceY < -18 && distanceX <= UPPERCUT_RANGE) {
         stateTimer = 10;
@@ -144,21 +297,52 @@ chooseAttack = function() {
         return;
     }
 
-    if (distanceX <= JAB_RANGE) {
-        setSTATE(stateJAB);
+    if (phase == 1) {
+        if (distanceX <= JAB_RANGE && pattern != 0) {
+            setSTATE(stateJAB);
+            return;
+        }
+
+        if (distanceX <= AGGRO_RANGE) {
+            setSTATE(statePROJECTILE_ATTACK);
+        }
         return;
     }
 
-    if (distanceX <= GROUND_POUND_RANGE && abs(distanceY) <= 40) {
+    if (phase == 2) {
+        if (distanceX <= GROUND_POUND_RANGE && abs(distanceY) <= 44 && pattern == 0) {
+            jumpTargetX = clamp(player.x, homeX - ARENA_RANGE, homeX + ARENA_RANGE);
+            jumpCommitted = false;
+            setSTATE(stateJUMP_ATTACK);
+            return;
+        }
+
+        if (distanceX <= JAB_RANGE) {
+            setSTATE(stateJAB);
+            return;
+        }
+
+        if (distanceX <= AGGRO_RANGE) {
+            setSTATE(statePROJECTILE_ATTACK);
+        }
+        return;
+    }
+
+    if (distanceX <= DASH_RANGE && pattern != 1) {
+        dashDistance = 0;
+        setSTATE(stateDASH_ATTACK);
+        return;
+    }
+
+    if (distanceX <= GROUND_POUND_RANGE && abs(distanceY) <= 48) {
         jumpTargetX = clamp(player.x, homeX - ARENA_RANGE, homeX + ARENA_RANGE);
         jumpCommitted = false;
         setSTATE(stateJUMP_ATTACK);
         return;
     }
 
-    if (enraged && distanceX <= DASH_RANGE) {
-        dashDistance = 0;
-        setSTATE(stateDASH_ATTACK);
+    if (distanceX <= JAB_RANGE) {
+        setSTATE(stateJAB);
         return;
     }
 
@@ -172,6 +356,15 @@ takeHit = method(id, function(_power, _sourceX) {
         return;
     }
 
+    if (!encounterStarted) {
+        startEncounter();
+        return;
+    }
+
+    if (!introComplete || STATE == statePHASE_CHANGE) {
+        return;
+    }
+
     HP -= _power;
     facing = sign(x - _sourceX);
     if (facing == 0) {
@@ -181,19 +374,93 @@ takeHit = method(id, function(_power, _sourceX) {
     HSP = 0;
 
     if (HP <= 0) {
-        isDefeated = true;
+        triggerDefeatSequence();
         setSTATE(stateDEFEAT);
+        return;
     }
-    else {
-        stateTimer = HIT_TIME;
-        attackCooldown = ATTACK_COOLDOWN;
-        setSTATE(stateHIT);
+
+    var targetPhase = getTargetPhase();
+    if (targetPhase > phase) {
+        beginPhaseShift(targetPhase);
+        return;
     }
+
+    stateTimer = HIT_TIME;
+    setAttackCooldown(ATTACK_COOLDOWN + 2);
+    setSTATE(stateHIT);
 });
 
+stateDORMANT = function() {
+    HSP = 0;
+    image_xscale = facing;
+
+    if (sprite_index != SPRITES.IDLE) {
+        sprite_index = SPRITES.IDLE;
+        image_index = 0;
+    }
+
+    var player = getPlayerTarget();
+    if (instance_exists(player)) {
+        faceTarget(player);
+        if (abs(player.x - x) <= ARENA_TRIGGER_RANGE && abs(player.y - y) <= 80) {
+            startEncounter();
+        }
+    }
+};
+
+stateINTRO = function() {
+    HSP = 0;
+    image_xscale = facing;
+
+    if (sprite_index != SPRITES.IDLE) {
+        sprite_index = SPRITES.IDLE;
+        image_index = 0;
+    }
+
+    var player = getPlayerTarget();
+    if (instance_exists(player)) {
+        faceTarget(player);
+    }
+
+    stateTimer -= 1;
+    if (stateTimer <= 0) {
+        introComplete = true;
+        setAttackCooldown(ATTACK_COOLDOWN);
+        setSTATE(stateIDLE);
+    }
+};
+
+statePHASE_CHANGE = function() {
+    HSP = 0;
+    VSP = 0;
+    image_xscale = facing;
+    image_speed = 0;
+
+    if (sprite_index != SPRITES.HIT) {
+        sprite_index = SPRITES.HIT;
+        image_index = 0;
+    }
+
+    stateTimer -= 1;
+    if (stateTimer <= 0) {
+        setSTATE(stateIDLE);
+    }
+};
+
 stateIDLE = function() {
+    if (!encounterStarted) {
+        setSTATE(stateDORMANT);
+        return;
+    }
+
+    if (!introComplete) {
+        setSTATE(stateINTRO);
+        return;
+    }
+
     var player = getPlayerTarget();
     var desiredSpeed = 0;
+    var maxMoveSpeed = MOVE_SPEED + ((phase - 1) * 0.15);
 
     if (sprite_index != SPRITES.IDLE) {
         sprite_index = SPRITES.IDLE;
@@ -210,7 +477,7 @@ stateIDLE = function() {
             faceTarget(player);
 
             if (abs(distanceX) > JAB_RANGE * 0.75) {
-                desiredSpeed = clamp(distanceX * 0.05, -MOVE_SPEED, MOVE_SPEED);
+                desiredSpeed = clamp(distanceX * 0.05, -maxMoveSpeed, maxMoveSpeed);
             }
 
             if (attackCooldown <= 0) {
@@ -224,7 +491,7 @@ stateIDLE = function() {
     if (desiredSpeed == 0) {
         var homeDelta = homeX - x;
         if (abs(homeDelta) > 4) {
-            desiredSpeed = clamp(homeDelta * 0.04, -MOVE_SPEED, MOVE_SPEED);
+            desiredSpeed = clamp(homeDelta * 0.04, -maxMoveSpeed, maxMoveSpeed);
             facing = sign(homeDelta);
         }
     }
@@ -248,7 +515,7 @@ statePROJECTILE_ATTACK = function() {
     }
 
     if (image_index >= image_number - 1) {
-        attackCooldown = ATTACK_COOLDOWN + 10;
+        setAttackCooldown(ATTACK_COOLDOWN + 10);
         setSTATE(stateIDLE);
     }
 };
@@ -267,7 +534,7 @@ stateJAB = function() {
     }
 
     if (image_index >= image_number - 1) {
-        attackCooldown = ATTACK_COOLDOWN;
+        setAttackCooldown(ATTACK_COOLDOWN);
         setSTATE(stateIDLE);
     }
 };
@@ -288,7 +555,7 @@ stateUPPERCUT = function() {
 
     stateTimer -= 1;
     if (stateTimer <= 0) {
-        attackCooldown = ATTACK_COOLDOWN + 6;
+        setAttackCooldown(ATTACK_COOLDOWN + 6);
         setSTATE(stateIDLE);
     }
 };
@@ -306,7 +573,7 @@ stateDASH_ATTACK = function() {
         return;
     }
 
-    HSP = DASH_SPEED * facing;
+    HSP = (DASH_SPEED + ((phase - 1) * 0.35)) * facing;
     dashDistance += abs(HSP);
 
     if (!attackApplied) {
@@ -332,7 +599,7 @@ stateSKID = function() {
     stateTimer -= 1;
     if (stateTimer <= 0) {
         HSP = 0;
-        attackCooldown = ATTACK_COOLDOWN + 4;
+        setAttackCooldown(ATTACK_COOLDOWN + 4);
         setSTATE(stateIDLE);
     }
 };
@@ -381,7 +648,7 @@ stateGROUND_POUND = function() {
 
     stateTimer -= 1;
     if (stateTimer <= 0) {
-        attackCooldown = ATTACK_COOLDOWN + 12;
+        setAttackCooldown(ATTACK_COOLDOWN + 12);
         setSTATE(stateIDLE);
     }
 };
@@ -426,4 +693,4 @@ stateDEFEAT = function() {
     }
 };
 
-STATE = stateIDLE;
+STATE = stateDORMANT;

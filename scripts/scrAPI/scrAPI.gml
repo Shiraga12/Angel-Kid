@@ -2,7 +2,6 @@
 
 globalvar COINS;
 COINS = 0;
-
 /// @desc Returns the current number of coins the player has.
 /// @returns {real} The player's current coin count.
 function getCOINS() {    return COINS;  }
@@ -15,7 +14,6 @@ function setCOINS(amount) {    COINS = amount;  }
 
 globalvar HEALTH;
 HEALTH = 8;
-
 /// @desc Returns the current health of the player.
 /// @returns {real} The player's current health.
 function getHEALTH() {    return HEALTH; }

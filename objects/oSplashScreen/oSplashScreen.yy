@@ -1,13 +1,15 @@
 {
   "$GMObject":"",
-  "%Name":"oFlyZone",
-  "eventList":[],
+  "%Name":"oSplashScreen",
+  "eventList":[
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":7,"eventType":7,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+  ],
   "managed":true,
-  "name":"oFlyZone",
+  "name":"oSplashScreen",
   "overriddenProperties":[],
   "parent":{
-    "name":"NPCS",
-    "path":"folders/NPCS.yy",
+    "name":"HUD",
+    "path":"folders/HUD.yy",
   },
   "parentObjectId":null,
   "persistent":false,
@@ -27,7 +29,10 @@
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":null,
+  "spriteId":{
+    "name":"sSplash_Screen",
+    "path":"sprites/sSplash_Screen/sSplash_Screen.yy",
+  },
   "spriteMaskId":null,
   "visible":true,
 }

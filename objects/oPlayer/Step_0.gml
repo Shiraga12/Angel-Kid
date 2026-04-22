@@ -15,6 +15,17 @@ keyPOSE = keyboard_check_pressed(ord("C"));
 
 STATE()
 
+if (invulFrames > 0) {
+    invulFrames -= 1;
+}
+
+if (STATE != stateDEAD && invulFrames > 0) {
+    image_alpha = (((invulFrames div 4) mod 2) == 0) ? 0.35 : 1;
+}
+else {
+    image_alpha = 1;
+}
+
 // Parallax background logic
 if layer_exists("BackgroundA") {
     background_a = layer_get_id("BackgroundA");

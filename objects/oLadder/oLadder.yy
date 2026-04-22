@@ -6,8 +6,8 @@
   "name":"oLadder",
   "overriddenProperties":[],
   "parent":{
-    "name":"Angel Kid",
-    "path":"Angel Kid.yyp",
+    "name":"NPCS",
+    "path":"folders/NPCS.yy",
   },
   "parentObjectId":null,
   "persistent":false,

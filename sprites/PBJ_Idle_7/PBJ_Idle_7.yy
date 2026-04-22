@@ -28,8 +28,8 @@
   "nineSlice":null,
   "origin":4,
   "parent":{
-    "name":"NPCS",
-    "path":"folders/NPCS.yy",
+    "name":"Punching Bag Joe",
+    "path":"folders/NPCS/Enemies/Punching Bag Joe.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

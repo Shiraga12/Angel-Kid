@@ -1,15 +1,21 @@
 {
   "$GMObject":"",
-  "%Name":"oFlyZone",
-  "eventList":[],
+  "%Name":"oCageTemplate",
+  "eventList":[
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+  ],
   "managed":true,
-  "name":"oFlyZone",
+  "name":"oCageTemplate",
   "overriddenProperties":[],
   "parent":{
-    "name":"NPCS",
-    "path":"folders/NPCS.yy",
+    "name":"Cage",
+    "path":"folders/NPCS/Cage.yy",
   },
-  "parentObjectId":null,
+  "parentObjectId":{
+    "name":"oNPCTemplate",
+    "path":"objects/oNPCTemplate/oNPCTemplate.yy",
+  },
   "persistent":false,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,

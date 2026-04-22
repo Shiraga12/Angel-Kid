@@ -1,18 +1,17 @@
 {
   "$GMObject":"",
-  "%Name":"oHalo",
+  "%Name":"oCheckpointFlag",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":{"name":"oCageTemplate","path":"objects/oCageTemplate/oCageTemplate.yy",},"eventNum":0,"eventType":4,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":{"name":"oEnemyTemplate","path":"objects/oEnemyTemplate/oEnemyTemplate.yy",},"eventNum":0,"eventType":4,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":{"name":"oPlayer","path":"objects/oPlayer/oPlayer.yy",},"eventNum":0,"eventType":4,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"oHalo",
+  "name":"oCheckpointFlag",
   "overriddenProperties":[],
   "parent":{
-    "name":"Player",
-    "path":"folders/Player.yy",
+    "name":"Checkpoint",
+    "path":"folders/NPCS/Checkpoint.yy",
   },
   "parentObjectId":null,
   "persistent":false,
@@ -33,12 +32,12 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sAK_Halo",
-    "path":"sprites/sAK_Halo/sAK_Halo.yy",
+    "name":"sCheckpointFlag_Idle",
+    "path":"sprites/sCheckpointFlag_Idle/sCheckpointFlag_Idle.yy",
   },
   "spriteMaskId":{
-    "name":"sAK_Halo",
-    "path":"sprites/sAK_Halo/sAK_Halo.yy",
+    "name":"sCheckpointFlag_Idle",
+    "path":"sprites/sCheckpointFlag_Idle/sCheckpointFlag_Idle.yy",
   },
   "visible":true,
 }

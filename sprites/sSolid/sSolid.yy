@@ -25,8 +25,8 @@
   "nineSlice":null,
   "origin":4,
   "parent":{
-    "name":"Angel Kid",
-    "path":"Angel Kid.yyp",
+    "name":"Tilesets",
+    "path":"folders/Tilesets.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

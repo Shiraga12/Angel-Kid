@@ -1,18 +1,17 @@
 {
   "$GMObject":"",
-  "%Name":"oHalo",
+  "%Name":"oBossArenaWall",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":{"name":"oCageTemplate","path":"objects/oCageTemplate/oCageTemplate.yy",},"eventNum":0,"eventType":4,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":{"name":"oEnemyTemplate","path":"objects/oEnemyTemplate/oEnemyTemplate.yy",},"eventNum":0,"eventType":4,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"oHalo",
+  "name":"oBossArenaWall",
   "overriddenProperties":[],
   "parent":{
-    "name":"Player",
-    "path":"folders/Player.yy",
+    "name":"Punching Bag Joe",
+    "path":"folders/NPCS/Enemies/Punching Bag Joe.yy",
   },
   "parentObjectId":null,
   "persistent":false,
@@ -33,12 +32,12 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sAK_Halo",
-    "path":"sprites/sAK_Halo/sAK_Halo.yy",
+    "name":"sSolid",
+    "path":"sprites/sSolid/sSolid.yy",
   },
   "spriteMaskId":{
-    "name":"sAK_Halo",
-    "path":"sprites/sAK_Halo/sAK_Halo.yy",
+    "name":"sSolid",
+    "path":"sprites/sSolid/sSolid.yy",
   },
   "visible":true,
 }

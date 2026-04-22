@@ -53,18 +53,136 @@ HALO = {
     Y_OFFSET: 9,
 };
 
+HITSTUN_TIME = 12;
+INVUL_TIME = 45;
+KNOCKBACK_H = 3.5;
+KNOCKBACK_V = 4.5;
+RESPAWN_INVUL_TIME = 90;
+RESPAWN_HEALTH = 8;
+
 attackApplied = false;
 chargeFrames = 0;
 currentAttackPower = ATTACK.POWER;
 currentAttackRange = ATTACK.RANGE;
 haloInstanceId = noone;
 haloThrown = false;
+respawnX = x;
+respawnY = y;
+invulFrames = 0;
+hitstunFrames = 0;
+hurtHsp = 0;
+hurtVsp = 0;
+
+var bossWallObject = asset_get_index("oBossArenaWall");
 
 COLLISIONS = [
     layer_tilemap_get_id("tmSOLID")
-]
+];
+
+if (bossWallObject != -1) {
+    array_push(COLLISIONS, bossWallObject);
+}
+
+resetActionState = function() {
+    attackApplied = false;
+    chargeFrames = 0;
+    currentAttackPower = ATTACK.POWER;
+    currentAttackRange = ATTACK.RANGE;
+    haloThrown = false;
+};
+
+setRespawnPoint = method(id, function(_x, _y) {
+    respawnX = _x;
+    respawnY = _y;
+});
+
+canTakeDamage = method(id, function() {
+    return STATE != stateDEAD && invulFrames <= 0;
+});
+
+beginDeath = function() {
+    resetActionState();
+    if (haloInstanceId != noone && instance_exists(haloInstanceId)) {
+        with (haloInstanceId) {
+            instance_destroy();
+        }
+    }
+
+    haloInstanceId = noone;
+    hurtHsp = 0;
+    hurtVsp = 0;
+    SP.H = 0;
+    SP.V = 0;
+    image_alpha = 1;
+    image_speed = 1;
+    STATE = stateDEAD;
+};
+
+recoverFromDeath = function() {
+    x = respawnX;
+    y = respawnY;
+    hurtHsp = 0;
+    hurtVsp = 0;
+    SP.H = 0;
+    SP.V = 0;
+    image_alpha = 1;
+    image_speed = 1;
+    setHEALTH(RESPAWN_HEALTH);
+    invulFrames = RESPAWN_INVUL_TIME;
+    STATE = stateFREE;
+};
+
+takeDamage = method(id, function(_amount, _sourceX, _knockbackH, _knockbackV) {
+    if (!canTakeDamage()) {
+        return false;
+    }
+
+    if (is_undefined(_sourceX)) {
+        _sourceX = x;
+    }
+
+    if (is_undefined(_knockbackH)) {
+        _knockbackH = KNOCKBACK_H;
+    }
+
+    if (is_undefined(_knockbackV)) {
+        _knockbackV = KNOCKBACK_V;
+    }
+
+    var healthBefore = getHEALTH();
+    damage(_amount);
+    if (getHEALTH() >= healthBefore) {
+        return false;
+    }
+
+    resetActionState();
+
+    var knockDirection = sign(x - _sourceX);
+    if (knockDirection == 0) {
+        knockDirection = image_xscale;
+        if (knockDirection == 0) {
+            knockDirection = 1;
+        }
+    }
+
+    image_xscale = knockDirection;
+
+    if (getHEALTH() <= 0) {
+        beginDeath();
+        return true;
+    }
+
+    invulFrames = INVUL_TIME;
+    hitstunFrames = HITSTUN_TIME;
+    hurtHsp = knockDirection * _knockbackH;
+    hurtVsp = -abs(_knockbackV);
+    image_speed = 1;
+    STATE = stateHIT;
+    return true;
+});
 
 playerAttack = function() {
+    var cageObject = asset_get_index("oCageTemplate");
     var jayCopterObject = asset_get_index("oJayCopter");
     var pbjObject = asset_get_index("oPunchingBagJoe");
     var shelldonObject = asset_get_index("oShelldon");
@@ -81,6 +199,7 @@ playerAttack = function() {
     }
 
     var targets = [
+        instance_place(rightBound, y, cageObject),
         instance_place(rightBound, y, oBoopoBobblehead),
         instance_place(rightBound, y, oBlocko),
         instance_place(rightBound, y, oBuddyBrawler),
@@ -91,6 +210,7 @@ playerAttack = function() {
         instance_place(rightBound, y, shelldonObject),
         instance_place(rightBound, y, thrustonObject),
         
+        collision_rectangle(leftBound, y - ATTACK.HEIGHT, rightBound, y + ATTACK.HEIGHT, cageObject, false, true),
         collision_rectangle(leftBound, y - ATTACK.HEIGHT, rightBound, y + ATTACK.HEIGHT, oBoopoBobblehead, false, true),
         collision_rectangle(leftBound, y - ATTACK.HEIGHT, rightBound, y + ATTACK.HEIGHT, oBlocko, false, true),
         collision_rectangle(leftBound, y - ATTACK.HEIGHT, rightBound, y + ATTACK.HEIGHT, oBuddyBrawler, false, true),
@@ -114,7 +234,7 @@ playerAttack = function() {
         }
     }
 };
-
+/// @desc 
 beginPunch = function() {
     currentAttackPower = ATTACK.POWER;
     currentAttackRange = ATTACK.RANGE;
@@ -127,7 +247,6 @@ beginPunch = function() {
     attackApplied = false;
     STATE = statePUNCHING;
 };
-
 throwHalo = function() {
     if (haloInstanceId != noone) {
         return;
@@ -143,16 +262,13 @@ throwHalo = function() {
     );
 
     haloInstanceId = halo;
-
-    // Direct assignment (cleaner + safer)
-    halo.owner = id;
-    halo.direction = (dir == 1) ? 0 : 180;
-    halo.speed = HALO.SPEED;
-    halo.returnSpeed = HALO.RETURN_SPEED;
-    halo.maxDistance = HALO.RANGE;
-    halo.damage = HALO.POWER;
+    variable_instance_set(halo, "owner", id);
+    variable_instance_set(halo, "direction", (dir == 1) ? 0 : 180);
+    variable_instance_set(halo, "speed", HALO.SPEED);
+    variable_instance_set(halo, "returnSpeed", HALO.RETURN_SPEED);
+    variable_instance_set(halo, "maxDistance", HALO.RANGE);
+    variable_instance_set(halo, "damage", HALO.POWER);
 };
-
 beginHaloThrow = function() {
     if (haloInstanceId != noone) {
         return;
@@ -387,6 +503,34 @@ stateGOOBER_POSE_SCARE = function() {
     }
 }
 
+stateHIT = function() {
+    if (sprite_index != SPRITES.HIT) {
+        sprite_index = SPRITES.HIT;
+        image_index = 0;
+    }
+
+    if (place_meeting(x, y + 2, COLLISIONS) && hurtVsp >= 0) {
+        hurtVsp = 0;
+    }
+    else if (hurtVsp < SP.MAX_FALL) {
+        hurtVsp += SP.GRV;
+    }
+
+    move_and_collide(hurtHsp, hurtVsp, COLLISIONS);
+
+    hurtHsp = lerp(hurtHsp, 0, 0.2);
+    if (abs(hurtHsp) < 0.05) {
+        hurtHsp = 0;
+    }
+
+    hitstunFrames -= 1;
+    if (hitstunFrames <= 0 && place_meeting(x, y + 2, COLLISIONS)) {
+        hurtHsp = 0;
+        hurtVsp = 0;
+        STATE = stateFREE;
+    }
+}
+
 stateDEAD = function() {
     SP.H = 0;
     SP.V = 0;
@@ -398,7 +542,7 @@ stateDEAD = function() {
     }
 
     if image_index >= image_number - 1 {
-        // Respawn logic can be added here
+        recoverFromDeath();
     }
 }
 
