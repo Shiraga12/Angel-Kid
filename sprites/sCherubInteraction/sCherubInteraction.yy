@@ -25,8 +25,8 @@
   "nineSlice":null,
   "origin":7,
   "parent":{
-    "name":"Cherub",
-    "path":"folders/NPCS/Cherub.yy",
+    "name":"Cherubs",
+    "path":"folders/NPCS/Cherubs.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

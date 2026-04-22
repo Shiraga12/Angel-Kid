@@ -28,8 +28,8 @@
   "nineSlice":null,
   "origin":4,
   "parent":{
-    "name":"Angel Kid",
-    "path":"Angel Kid.yyp",
+    "name":"NPCS",
+    "path":"folders/NPCS.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",
