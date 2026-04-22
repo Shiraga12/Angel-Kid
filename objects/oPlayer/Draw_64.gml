@@ -17,9 +17,9 @@ if STATE != stateDEAD {
 }
 
 // Draw Coins
-draw_sprite_ext(sCoin, 0, 70, 90, 2, 2, 0, c_white, 1);
+draw_sprite_ext(sCoin, 0, 60, 160, 2, 2, 0, c_white, 1);
 draw_set_valign(fa_middle);
 draw_set_halign(fa_left);
 draw_set_font(FONTS[1]);
-draw_text_transformed(80, 90, string(COINS), 2, 2, 0);
+draw_text_transformed(80, 160, string(COINS), 2, 2, 0);
 draw_set_font(FONTS[0]);

@@ -66,6 +66,7 @@ COLLISIONS = [
 
 playerAttack = function() {
     var jayCopterObject = asset_get_index("oJayCopter");
+    var pbjObject = asset_get_index("oPunchingBagJoe");
     var shelldonObject = asset_get_index("oShelldon");
     var thrustonObject = asset_get_index("oThruston");
     var offsetX = image_xscale * currentAttackRange;
@@ -86,14 +87,17 @@ playerAttack = function() {
         instance_place(rightBound, y, oCrashTestDashie),
         instance_place(rightBound, y, jayCopterObject),
         instance_place(rightBound, y, oMollyWopWally),
+        instance_place(rightBound, y, pbjObject),
         instance_place(rightBound, y, shelldonObject),
         instance_place(rightBound, y, thrustonObject),
+        
         collision_rectangle(leftBound, y - ATTACK.HEIGHT, rightBound, y + ATTACK.HEIGHT, oBoopoBobblehead, false, true),
         collision_rectangle(leftBound, y - ATTACK.HEIGHT, rightBound, y + ATTACK.HEIGHT, oBlocko, false, true),
         collision_rectangle(leftBound, y - ATTACK.HEIGHT, rightBound, y + ATTACK.HEIGHT, oBuddyBrawler, false, true),
         collision_rectangle(leftBound, y - ATTACK.HEIGHT, rightBound, y + ATTACK.HEIGHT, oCrashTestDashie, false, true),
         collision_rectangle(leftBound, y - ATTACK.HEIGHT, rightBound, y + ATTACK.HEIGHT, jayCopterObject, false, true),
         collision_rectangle(leftBound, y - ATTACK.HEIGHT, rightBound, y + ATTACK.HEIGHT, oMollyWopWally, false, true),
+        collision_rectangle(leftBound, y - ATTACK.HEIGHT, rightBound, y + ATTACK.HEIGHT, pbjObject, false, true),
         collision_rectangle(leftBound, y - ATTACK.HEIGHT, rightBound, y + ATTACK.HEIGHT, shelldonObject, false, true),
         collision_rectangle(leftBound, y - ATTACK.HEIGHT, rightBound, y + ATTACK.HEIGHT, thrustonObject, false, true)
     ];
@@ -101,10 +105,12 @@ playerAttack = function() {
     for (var i = 0; i < array_length(targets); i += 1) {
         var target = targets[i];
 
-        if (instance_exists(target) && variable_instance_exists(target, "takeHit")) {
-            var hitMethod = variable_instance_get(target, "takeHit");
-            hitMethod = method(target, hitMethod);
-            hitMethod(currentAttackPower, x);
+        if (instance_exists(target)) {
+            with (target) {
+                if (variable_instance_exists(id, "takeHit")) {
+                    takeHit(other.currentAttackPower, other.x);
+                }
+            }
         }
     }
 };
@@ -122,40 +128,33 @@ beginPunch = function() {
     STATE = statePUNCHING;
 };
 
-playerHasHalo = function() {
-    if (!instance_exists(haloInstanceId)) {
-        haloInstanceId = noone;
-    }
-
-    return haloInstanceId != noone;
-};
-
 throwHalo = function() {
-    var haloObject = asset_get_index("oHalo");
-
-    if (haloObject == -1 || playerHasHalo()) {
+    if (haloInstanceId != noone) {
         return;
     }
 
-    var halo = instance_create_depth(
-        x + (image_xscale * HALO.X_OFFSET),
+    var dir = image_xscale;
+
+    var halo = instance_create_layer(
+        x + (dir * HALO.X_OFFSET),
         y + HALO.Y_OFFSET,
-        depth,
-        haloObject
+        "Instances",
+        oHalo
     );
 
     haloInstanceId = halo;
 
-    variable_instance_set(halo, "ownerId", id);
-    variable_instance_set(halo, "throwDirection", image_xscale);
-    variable_instance_set(halo, "attackPower", HALO.POWER);
-    variable_instance_set(halo, "maxDistance", HALO.RANGE);
-    variable_instance_set(halo, "travelSpeed", HALO.SPEED);
-    variable_instance_set(halo, "returnSpeed", HALO.RETURN_SPEED);
+    // Direct assignment (cleaner + safer)
+    halo.owner = id;
+    halo.direction = (dir == 1) ? 0 : 180;
+    halo.speed = HALO.SPEED;
+    halo.returnSpeed = HALO.RETURN_SPEED;
+    halo.maxDistance = HALO.RANGE;
+    halo.damage = HALO.POWER;
 };
 
 beginHaloThrow = function() {
-    if (playerHasHalo()) {
+    if (haloInstanceId != noone) {
         return;
     }
 
@@ -222,7 +221,7 @@ stateFREE = function() {
     if (keyFLY) {
         STATE = stateFLYING;
     }
-    else if (keyHALO_PRESSED && !playerHasHalo()) {
+    else if (keyHALO_PRESSED && !(haloInstanceId != noone)) {
         beginHaloThrow();
     }
     else if (keyPUNCH_PRESSED) {
@@ -341,13 +340,16 @@ stateHALO_THROW = function() {
         image_speed = 1;
     }
 
-    if image_index >= image_number - 1 {
-        if (!haloThrown) {
-            haloThrown = true;
-            throwHalo();
-        }
-        STATE = stateFREE;
-    }
+    // Throw at specific frame (feels responsive)
+	if (!haloThrown && image_index >= 13) {
+	    haloThrown = true;
+	    throwHalo();
+	}
+
+	// End animation
+	if (image_index >= image_number - 1) {
+	    STATE = stateFREE;
+	}
 }
 
 stateAIR_TO_GROUND = function() {

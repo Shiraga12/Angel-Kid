@@ -21,7 +21,10 @@ HEALTH = 8;
 function getHEALTH() {    return HEALTH; }
 /// @desc Adds a specified amount of health to the player's total.
 /// @param {real} amount The amount of health to add.
-function addHEALTH(amount) {    HEALTH += clamp(amount, 0, 8 - HEALTH); }
+function heal(amount) {    HEALTH += clamp(amount, 0, 8 - HEALTH); }
+/// @desc Subtracts a specified amount of health from the player's total.
+/// @param {real} amount The amount of health to subtract.
+function damage(amount) {    HEALTH -= clamp(amount, 0, HEALTH); }
 /// @desc Sets the player's health to a specific amount.
 /// @param {real} amount The new total health for the player.
 function setHEALTH(amount) {    HEALTH = clamp(amount, 0, 8); }

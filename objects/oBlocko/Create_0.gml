@@ -35,7 +35,7 @@ setSTATE = function(_state) {
     }
 };
 
-takeHit = function(_power, _sourceX) {
+takeHit = method(id, function(_power, _sourceX) {
     if (isDefeated) {
         return;
     }
@@ -54,7 +54,7 @@ takeHit = function(_power, _sourceX) {
         stateTimer = HIT_TIME;
         setSTATE(stateHIT);
     }
-};
+});
 
 shouldTurnAround = function() {
     var wallAhead = place_meeting(x + (facing * 8), y, COLLISIONS);

@@ -111,7 +111,7 @@ stateDEFEAT = function() {
     VSP += GRV;
 };
 
-takeHit = function(_power, _sourceX) {
+takeHit = method(id, function(_power, _sourceX) {
     if (isDefeated) {
         return;
     }
@@ -126,6 +126,6 @@ takeHit = function(_power, _sourceX) {
         isDefeated = true;
         setSTATE(stateDEFEAT);
     }
-};
+});
 
 STATE = statePATROL;

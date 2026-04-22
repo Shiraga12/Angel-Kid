@@ -25,8 +25,8 @@
   "nineSlice":null,
   "origin":4,
   "parent":{
-    "name":"NPCS",
-    "path":"folders/NPCS.yy",
+    "name":"Thruston",
+    "path":"folders/NPCS/Enemies/Thruston.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

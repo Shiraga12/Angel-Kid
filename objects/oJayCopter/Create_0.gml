@@ -21,7 +21,7 @@ setSTATE = function(_state) {
     }
 };
 
-takeHit = function(_power, _sourceX) {
+takeHit = method(id, function(_power, _sourceX) {
     if (isDefeated) {
         return;
     }
@@ -36,7 +36,7 @@ HP -= _power;
         isDefeated = true;
         setSTATE(stateDEFEAT);
     }
-};
+});
 
 stateFLY = function() {
     if (sprite_index != SPRITES.FLY) {
