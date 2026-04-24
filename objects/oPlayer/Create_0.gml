@@ -367,6 +367,9 @@ stateJUMPING = function() {
         sprite_index = SPRITES.JUMP;
         image_index = 0;
     }
+	if (SP.H != 0) {
+        image_xscale = sign(SP.H);
+    }
 }
 
 stateFLYING = function() {

@@ -15,6 +15,9 @@ if STATE != stateDEAD {
         case 0: draw_sprite_ext(sHealthSystem, 8, 70, 70, 2, 2, 0, c_white, 1); break;
     }
 }
+else {
+    draw_sprite_ext(sHealthSystemBroken, image_index, 70, 70, 2, 2, 0, c_white, 1);
+}
 
 // Draw Coins
 draw_sprite_ext(sCoin, 0, 60, 160, 2, 2, 0, c_white, 1);

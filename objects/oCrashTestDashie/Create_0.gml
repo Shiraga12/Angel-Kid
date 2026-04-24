@@ -43,7 +43,6 @@ willCrash = function() {
     return wallAhead || !floorAhead;
 };
 
-
 setSTATE = function(_state) {
     if (STATE != _state) {
         STATE = _state;
