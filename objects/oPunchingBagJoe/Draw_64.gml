@@ -1,5 +1,5 @@
 if (uiAlpha > 0.01) {
-    var barLeft = (display_get_gui_width() - UI_BAR_WIDTH) * 0.5;
+    var barLeft = (guiWIDTH - UI_BAR_WIDTH) * 0.5;
     var barTop = 28;
     var healthRatio = clamp(HP / MAX_HP, 0, 1);
 
@@ -24,8 +24,6 @@ if (uiAlpha > 0.01) {
 
 if (bannerTimer > 0) {
     var bannerAlpha = min(1, bannerTimer / 12);
-    var centerX = display_get_gui_width() * 0.5;
-    var centerY = 96;
 
     draw_set_alpha(bannerAlpha);
     draw_set_color(c_black);
