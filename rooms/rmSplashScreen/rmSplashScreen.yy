@@ -1,7 +1,7 @@
 {
   "$GMRoom":"v1",
   "%Name":"rmSplashScreen",
-  "creationCodeFile":"",
+  "creationCodeFile":"rooms/rmSplashScreen/RoomCreationCode.gml",
   "inheritCode":false,
   "inheritCreationOrder":false,
   "inheritLayers":false,

@@ -30,16 +30,11 @@ function world(_NAME,_STAGES)  constructor {
 
 }
 /// @description Defines the stage structure for the game.
-/// @param {string} _NAME The name of the stage.
 /// @param {asset.room} _ROOM The room associated with the stage.
-function stage(_NAME,_ROOM) constructor {
-    NAME = _NAME;
+function stage(_ROOM) constructor {
     ROOM = _ROOM;
     CLEARED = false;
 
-    /// @description Retrieves the name of the stage.
-    /// @returns {string} The name of the stage.
-    static getNAME      = function() { return NAME; }
     /// @description Retrieves the room associated with the stage.
     /// @returns {asset.room} The room associated with the stage.
     static getROOM      = function() { return ROOM; }

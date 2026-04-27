@@ -73,6 +73,26 @@ hitstunFrames = 0;
 hurtHsp = 0;
 hurtVsp = 0;
 
+SOUNDS = {
+    TUTORIAL_ISLAND: asset_get_index("sndTutorialIsland"),
+    GAME_OVER: asset_get_index("sndGameOver"),
+    GOOBER_SCARE: asset_get_index("sndGooberScare"),
+    HALO_THROW: asset_get_index("sndHaloThrow"),
+    HIT_IMPACT: asset_get_index("sndHitImpact2"),
+    HIT_LANDED: asset_get_index("sndHitLanded"),
+    JUMP: asset_get_index("sndJump"),
+    LIFE_LOSS: asset_get_index("sndLifeLoss"),
+    PUNCH_HOLD: asset_get_index("sndPunchHold"),
+    FLY: asset_get_index("sndFly")
+};
+
+if (room == Room1) {
+    audio_stop_all();
+	if (SOUNDS.TUTORIAL_ISLAND != -1) {
+		audio_play_sound(SOUNDS.TUTORIAL_ISLAND, 0, true);
+	}
+}
+
 var bossWallObject = asset_get_index("oBossArenaWall");
 
 COLLISIONS = [
@@ -128,6 +148,14 @@ recoverFromDeath = function() {
     image_alpha = 1;
     image_speed = 1;
     setHEALTH(RESPAWN_HEALTH);
+
+    if (room == Room1) {
+        audio_stop_all();
+		if (SOUNDS.TUTORIAL_ISLAND != -1) {
+			audio_play_sound(SOUNDS.TUTORIAL_ISLAND, 0, true);
+		}
+    }
+
     invulFrames = RESPAWN_INVUL_TIME;
     STATE = stateFREE;
 };
@@ -168,10 +196,17 @@ takeDamage = method(id, function(_amount, _sourceX, _knockbackH, _knockbackV) {
     image_xscale = knockDirection;
 
     if (getHEALTH() <= 0) {
+        audio_stop_all();
+        if (SOUNDS.GAME_OVER != -1) {
+            audio_play_sound(SOUNDS.GAME_OVER, 0, false);
+        }
         beginDeath();
         return true;
     }
 
+    if (SOUNDS.LIFE_LOSS != -1) {
+        audio_play_sound(SOUNDS.LIFE_LOSS, 0, false);
+    }
     invulFrames = INVUL_TIME;
     hitstunFrames = HITSTUN_TIME;
     hurtHsp = knockDirection * _knockbackH;
@@ -222,15 +257,24 @@ playerAttack = function() {
         collision_rectangle(leftBound, y - ATTACK.HEIGHT, rightBound, y + ATTACK.HEIGHT, thrustonObject, false, true)
     ];
 
+    var didHit = false;
+
     for (var i = 0; i < array_length(targets); i += 1) {
         var target = targets[i];
 
         if (instance_exists(target)) {
+            didHit = true;
             with (target) {
                 if (variable_instance_exists(id, "takeHit")) {
                     takeHit(other.currentAttackPower, other.x);
                 }
             }
+        }
+    }
+
+    if (didHit) {
+        if (SOUNDS.HIT_IMPACT != -1) {
+            audio_play_sound(SOUNDS.HIT_IMPACT, 0, false);
         }
     }
 };
@@ -251,6 +295,10 @@ throwHalo = function() {
     if (haloInstanceId != noone) {
         return;
     }
+
+	if (SOUNDS.HALO_THROW != -1) {
+		audio_play_sound(SOUNDS.HALO_THROW, 0, false);
+	}
 
     var dir = image_xscale;
 
@@ -366,6 +414,9 @@ stateJUMPING = function() {
     if sprite_index != SPRITES.JUMP {
         sprite_index = SPRITES.JUMP;
         image_index = 0;
+		if (SOUNDS.JUMP != -1) {
+			audio_play_sound(SOUNDS.JUMP, 0, false);
+		}
     }
 	if (SP.H != 0) {
         image_xscale = sign(SP.H);
@@ -384,6 +435,9 @@ stateFLYING = function() {
     if sprite_index != SPRITES.FLY {
         sprite_index = SPRITES.FLY;
         image_index = 0;
+		if (SOUNDS.FLY != -1) {
+			audio_play_sound(SOUNDS.FLY, 0, false);
+		}
     }
 
     if !keyFLY {
@@ -404,6 +458,9 @@ statePUNCH_CHARGING = function() {
     if (sprite_index != SPRITES.PUNCH_CHARGE) {
         sprite_index = SPRITES.PUNCH_CHARGE;
         image_index = 0;
+		if (SOUNDS.PUNCH_HOLD != -1) {
+			audio_play_sound(SOUNDS.PUNCH_HOLD, 0, false);
+		}
     }
 
     if (keyPUNCH_RELEASED) {
@@ -486,6 +543,9 @@ stateAIR_TO_GROUND = function() {
     if sprite_index != SPRITES.LANDING {
         sprite_index = SPRITES.LANDING;
         image_index = 0;
+		if (SOUNDS.HIT_LANDED != -1) {
+			audio_play_sound(SOUNDS.HIT_LANDED, 0, false);
+		}
     }
     if image_index >= image_number - 1 {
         STATE = stateFREE;
@@ -500,6 +560,9 @@ stateGOOBER_POSE_SCARE = function() {
     if sprite_index != SPRITES.GOOBER_POSE_SCARE {
         sprite_index = SPRITES.GOOBER_POSE_SCARE;
         image_index = 0;
+		if (SOUNDS.GOOBER_SCARE != -1) {
+			audio_play_sound(SOUNDS.GOOBER_SCARE, 0, false);
+		}
     }
     if image_index >= image_number - 1 {
         STATE = stateFREE;

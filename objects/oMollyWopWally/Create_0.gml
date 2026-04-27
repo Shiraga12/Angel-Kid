@@ -43,6 +43,11 @@ takeHit = method(id, function(_power, _sourceX) {
         facing = 1;
     }
 
+    var enemyHurtSound = asset_get_index((HP <= 0) ? "sndEnemyHurt2" : "sndEnemyHurt");
+    if (enemyHurtSound != -1) {
+        audio_play_sound(enemyHurtSound, 0, false);
+    }
+
     if (HP <= 0) {
         isDefeated = true;
         setSTATE(stateDEFEAT);

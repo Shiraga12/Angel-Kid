@@ -3,8 +3,8 @@
   "%Name":"shdSonicFadeToWhiteTransition",
   "name":"shdSonicFadeToWhiteTransition",
   "parent":{
-    "name":"Angel Kid",
-    "path":"Angel Kid.yyp",
+    "name":"Shaders",
+    "path":"folders/Shaders.yy",
   },
   "resourceType":"GMShader",
   "resourceVersion":"2.0",

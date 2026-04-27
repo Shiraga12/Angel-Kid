@@ -1,0 +1,26 @@
+{
+  "$GMSound":"v2",
+  "%Name":"sndAngelincLogo",
+  "audioGroupId":{
+    "name":"audiogroup_default",
+    "path":"audiogroups/audiogroup_default",
+  },
+  "bitDepth":1,
+  "channelFormat":0,
+  "compression":0,
+  "compressionQuality":4,
+  "conversionMode":0,
+  "duration":8.0,
+  "exportDir":"",
+  "name":"sndAngelincLogo",
+  "parent":{
+    "name":"Music",
+    "path":"folders/Music.yy",
+  },
+  "preload":false,
+  "resourceType":"GMSound",
+  "resourceVersion":"2.0",
+  "sampleRate":44100,
+  "soundFile":"sndAngelincLogo.mp3",
+  "volume":1.0,
+}

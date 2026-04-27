@@ -46,7 +46,7 @@ ATTACK_POWER = {
     GROUND_POUND: 2
 };
 
-var bossWallObject = asset_get_index("oBossArenaWall");
+bossWallObject = asset_get_index("oBossArenaWall");
 
 COLLISIONS = [
     layer_tilemap_get_id("tmSOLID")
@@ -204,6 +204,12 @@ beginPhaseShift = function(_phase) {
     HSP = 0;
     VSP = 0;
     stateTimer = PHASE_CHANGE_TIME;
+
+    var pbjPhaseSound = asset_get_index("sndPBJVoice2");
+    if (pbjPhaseSound != -1) {
+        audio_play_sound(pbjPhaseSound, 0, false);
+    }
+
     showBanner(getPhaseLabel(), PHASE_CHANGE_TIME);
     setAttackCooldown(ATTACK_COOLDOWN + 10);
     setSTATE(statePHASE_CHANGE);
@@ -215,6 +221,12 @@ startEncounter = function() {
     }
 
     encounterStarted = true;
+
+    var pbjIntroSound = asset_get_index("sndPBJVoice");
+    if (pbjIntroSound != -1) {
+        audio_play_sound(pbjIntroSound, 0, false);
+    }
+
     lockArena();
     showBanner(BOSS_NAME, INTRO_TIME);
     stateTimer = INTRO_TIME;
@@ -369,6 +381,11 @@ takeHit = method(id, function(_power, _sourceX) {
     facing = sign(x - _sourceX);
     if (facing == 0) {
         facing = 1;
+    }
+
+    var enemyHurtSound = asset_get_index((HP <= 0) ? "sndEnemyHurt2" : "sndEnemyHurt");
+    if (enemyHurtSound != -1) {
+        audio_play_sound(enemyHurtSound, 0, false);
     }
 
     HSP = 0;

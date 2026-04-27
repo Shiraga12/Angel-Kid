@@ -6,14 +6,12 @@ uniform float u_progress;
 
 const vec3 offsets = normalize(vec3(5.0, 2.0, 1.0));
 
-vec3 sonicFadeToWhite(vec3 color, float amount)
-{
-    float t = pow(clamp(amount, 0.0, 1.0), 14.0);
+vec3 sonicFadeToWhite(vec3 color, float amount) {
+    float t = smoothstep(0.0, 1.0, clamp(amount, 0.0, 1.0));
     return clamp(color + t * offsets * 8.0, 0.0, 1.0);
 }
 
-void main()
-{
+void main() {
     float progress = clamp(u_progress, 0.0, 1.0);
     vec3 fromColor = texture2D(gm_BaseTexture, v_vTexcoord).rgb;
     vec3 toColor = texture2D(u_toTexture, v_vTexcoord).rgb;

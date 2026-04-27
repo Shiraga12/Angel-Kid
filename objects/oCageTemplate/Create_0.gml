@@ -22,6 +22,20 @@ openCage = function() {
     }
 
     isOpened = true;
+
+    if (object_index == oFinalCage) {
+        var levelCompleteSound = asset_get_index("sndLevelComplete");
+        if (levelCompleteSound != -1) {
+            audio_play_sound(levelCompleteSound, 0, false);
+        }
+    }
+    else if (object_index == oCage) {
+        var secretFoundSound = asset_get_index("sndSecretFound");
+        if (secretFoundSound != -1) {
+            audio_play_sound(secretFoundSound, 0, false);
+        }
+    }
+
     onOpen();
 
     if (SPRITES.OPENING != noone) {

@@ -1,1 +1,0 @@
-transition_goto(rmTitleScreen, 0.5, 0.5, 120, 50, shdSonicFadeToBlackTransition);

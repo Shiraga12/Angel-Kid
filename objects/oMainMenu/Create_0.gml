@@ -1,5 +1,11 @@
 /// @desc Main menu using the sMM_* sprite set.
 
+var mainMenuMusic = asset_get_index("sndMainMenu");
+audio_stop_all();
+if (mainMenuMusic != -1) {
+    audio_play_sound(mainMenuMusic, 0, true);
+}
+
 menuItems = [
     { sprite: sMM_AngelMode, enabled: true, targetRoom: Room1, notice: "" },
     { sprite: sMM_TimeAttack, enabled: false, targetRoom: noone, notice: "TIME ATTACK COMING SOON" },
@@ -28,6 +34,13 @@ selectNEXT = function(_direction) {
 
 activateSELECTED = function() {
     var item = menuItems[selectedIndex];
+
+    if (item.sprite == sMM_Options) {
+        var optionsMenuSound = asset_get_index("sndOptionsMenu");
+        if (optionsMenuSound != -1) {
+            audio_play_sound(optionsMenuSound, 0, false);
+        }
+    }
 
     if (item.enabled) {
         var guiWidth = max(1, display_get_gui_width());

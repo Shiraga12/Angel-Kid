@@ -1,5 +1,20 @@
 /// API - 
 
+globalvar LIVES;
+LIVES = 3;
+/// @desc Returns the current number of lives the player has.
+/// @returns {real} The player's current life count.
+function getLIVES() {    return LIVES;  }
+/// @desc Adds a specified amount of lives to the player's total.
+/// @param {real} amount The number of lives to add.
+function gainLIVES(amount) {    LIVES += amount; }
+/// @desc Subtracts a specified amount of lives from the player's total.
+/// @param {real} amount The number of lives to subtract.
+function loseLIVES(amount) {    LIVES -= amount; }
+/// @desc Sets the player's life count to a specific amount.
+/// @param {real} amount The new total number of lives for the player.
+function setLIVES(amount) {    LIVES = amount;  }
+
 globalvar COINS;
 COINS = 0;
 /// @desc Returns the current number of coins the player has.
@@ -19,7 +34,16 @@ HEALTH = 8;
 function getHEALTH() {    return HEALTH; }
 /// @desc Adds a specified amount of health to the player's total.
 /// @param {real} amount The amount of health to add.
-function heal(amount) {    HEALTH += clamp(amount, 0, 8 - HEALTH); }
+function heal(amount) {
+	var healthBefore = HEALTH;
+	HEALTH += clamp(amount, 0, 8 - HEALTH);
+	if (HEALTH > healthBefore) {
+		var oneUpSound = asset_get_index("snd1Up");
+		if (oneUpSound != -1) {
+			audio_play_sound(oneUpSound, 0, false);
+		}
+	}
+}
 /// @desc Subtracts a specified amount of health from the player's total.
 /// @param {real} amount The amount of health to subtract.
 function damage(amount) {    HEALTH -= clamp(amount, 0, HEALTH); }
@@ -31,7 +55,7 @@ function setHEALTH(amount) {    HEALTH = clamp(amount, 0, 8); }
 globalvar WORLDS;
 WORLDS = [
 	new world("Tutorial Island", [
-        new stage("The Beach", Room1),
+        new stage(Room1),
     ]),
 ]
 /// @desc Returns the list of worlds in the game.
@@ -50,6 +74,10 @@ function clearWORLD(name) {
 		for (var i = 0; i < array_length(stages); i++) {
 			stages[i].CLEARED = true;
         }
+		var worldCompleteSound = asset_get_index("sndWorldComplete");
+		if (worldCompleteSound != -1) {
+			audio_play_sound(worldCompleteSound, 0, false);
+		}
     }
 }
 /// @desc Retrieves a world by name.
@@ -92,80 +120,4 @@ function addSTAGE(worldNAME, stageNAME, stageROOM) {
     #macro centerY (guiHEIGHT * 0.5)
 #endregion
 
-
-/// @desc Ensures the persistent transition controller exists.
-/// @returns {real} The controller instance id.
-function transition_ensure_controller() {
-	if (!instance_exists(oTransitionController)) {
-		instance_create_depth(0, 0, -100000, oTransitionController);
-	}
-
-	return instance_find(oTransitionController, 0);
-}
-
-/// @desc Returns whether a room transition is currently active.
-/// @returns {bool}
-function transition_is_active() {
-	var controller = transition_ensure_controller();
-	if (!instance_exists(controller)) {
-		return false;
-	}
-
-	var isActiveMethod = variable_instance_get(controller, "isActive");
-	return isActiveMethod();
-}
-
-/// @desc Returns the default transition duration in frames.
-/// @returns {real}
-function transition_default_duration() {
-	return max(1, round(room_speed));
-}
-
-/// @desc Starts a shader-backed transition to a specific room.
-/// @param {asset.room} _room
-/// @param {real} _focusX
-/// @param {real} _focusY
-/// @param {real} _durationFrames
-/// @param {real} _pixelAmount
-/// @param {asset.shader} _shader
-/// @returns {bool}
-function transition_goto(_room, _focusX = 0.5, _focusY = 0.5, _durationFrames = undefined, _pixelAmount = 50, _shader = shdSonicFadeToBlackTransition) {
-	if (_room == noone || _room == -1) {
-		return false;
-	}
-
-	if (is_undefined(_durationFrames)) {
-		_durationFrames = transition_default_duration();
-	}
-
-	if (!shaders_are_supported()) {
-		room_goto(_room);
-		return false;
-	}
-
-	var controller = transition_ensure_controller();
-	if (!instance_exists(controller)) {
-		room_goto(_room);
-		return false;
-	}
-
-	var beginTransitionMethod = variable_instance_get(controller, "beginTransition");
-	return beginTransitionMethod(_room, _focusX, _focusY, _durationFrames, _pixelAmount, _shader);
-}
-
-/// @desc Starts a shader-backed transition to the next room in room order.
-/// @param {real} _focusX
-/// @param {real} _focusY
-/// @param {real} _durationFrames
-/// @param {real} _pixelAmount
-/// @param {asset.shader} _shader
-/// @returns {bool}
-function transition_goto_next(_focusX = 0.5, _focusY = 0.5, _durationFrames = undefined, _pixelAmount = 50, _shader = shdSonicFadeToBlackTransition) {
-	var nextRoom = room_next(room);
-	if (nextRoom == -1) {
-		return false;
-	}
-
-	return transition_goto(nextRoom, _focusX, _focusY, _durationFrames, _pixelAmount, _shader);
-}
 

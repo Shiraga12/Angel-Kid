@@ -7,7 +7,7 @@ uniform float u_progress;
 const vec3 offsets = normalize(vec3(5.0, 2.0, 1.0));
 
 vec3 sonicFadeToBlack(vec3 color, float amount) {
-    float t = pow(clamp(amount, 0.0, 1.0), 14.0);
+    float t = smoothstep(0.0, 1.0, clamp(amount, 0.0, 1.0));
     return clamp(color - t * offsets * 8.0, 0.0, 1.0);
 }
 

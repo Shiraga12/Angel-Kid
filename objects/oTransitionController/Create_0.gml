@@ -2,8 +2,9 @@
 
 TRANSITION_STATE = {
     IDLE: 0,
-    CAPTURE_NEXT: 1,
-    ACTIVE: 2
+    OUTRO: 1,
+    CAPTURE_NEXT: 2,
+    ACTIVE: 3
 };
 
 transitionState = TRANSITION_STATE.IDLE;
@@ -87,12 +88,6 @@ beginTransition = method(id, function(_room, _focusX, _focusY, _durationFrames, 
 
     configureShader(_shader);
 
-    var capturedSurface = captureApplicationSurface();
-    if (capturedSurface == -1) {
-        room_goto(_room);
-        return false;
-    }
-
     if (surface_exists(fromSurface)) {
         surface_free(fromSurface);
     }
@@ -101,7 +96,7 @@ beginTransition = method(id, function(_room, _focusX, _focusY, _durationFrames, 
         surface_free(toSurface);
     }
 
-    fromSurface = capturedSurface;
+    fromSurface = -1;
     toSurface = -1;
     targetRoom = _room;
     progress = 0;
@@ -110,10 +105,9 @@ beginTransition = method(id, function(_room, _focusX, _focusY, _durationFrames, 
     focusY = clamp(_focusY, 0, 1);
     pixelAmount = max(1, _pixelAmount);
     finishAfterDraw = false;
-    transitionState = TRANSITION_STATE.CAPTURE_NEXT;
+    transitionState = TRANSITION_STATE.OUTRO;
 
-    application_surface_draw_enable(false);
-    room_goto(targetRoom);
+    application_surface_draw_enable(true);
     return true;
 });
 
