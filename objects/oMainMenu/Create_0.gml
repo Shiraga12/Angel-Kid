@@ -7,7 +7,7 @@ if (mainMenuMusic != -1) {
 }
 
 menuItems = [
-    { sprite: sMM_AngelMode, enabled: true, targetRoom: Room1, notice: "" },
+    { sprite: sMM_AngelMode, enabled: true, targetRoom: rmStage1, notice: "" },
     { sprite: sMM_TimeAttack, enabled: false, targetRoom: noone, notice: "TIME ATTACK COMING SOON" },
     { sprite: sMM_Competition, enabled: false, targetRoom: noone, notice: "COMPETITION COMING SOON" },
     { sprite: sMM_Options, enabled: false, targetRoom: noone, notice: "OPTIONS COMING SOON" }

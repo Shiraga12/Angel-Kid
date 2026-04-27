@@ -88,6 +88,8 @@ function text_default_state() {
 		xscale: 1,
 		yscale: 1,
 		font: -1,
+		halign: fa_left,
+		valign: fa_top,
 
 		wave: false,
 		wobble: false,
@@ -126,6 +128,8 @@ function text_clone_state(_s) {
 		xscale: _s.xscale,
 		yscale: _s.yscale,
 		font: _s.font,
+		halign: _s.halign,
+		valign: _s.valign,
 
 		wave: _s.wave,
 		wobble: _s.wobble,
@@ -215,7 +219,29 @@ function text_apply_tag(_stack, _state, _token) {
 
 		case "FONT":
 			text_push_state(_stack, _state);
-			_state.font = text_asset(_token.args[0]);
+			_state.font = text_font(_token.args[0]);
+		break;
+
+		case "HALIGN":
+			text_push_state(_stack, _state);
+			_state.halign = text_halign(_token.args[0]);
+		break;
+
+		case "VALIGN":
+			text_push_state(_stack, _state);
+			_state.valign = text_valign(_token.args[0]);
+		break;
+
+		case "ALIGN":
+			text_push_state(_stack, _state);
+
+			if (array_length(_token.args) > 0) {
+				_state.halign = text_halign(_token.args[0]);
+			}
+
+			if (array_length(_token.args) > 1) {
+				_state.valign = text_valign(_token.args[1]);
+			}
 		break;
 
 		case "WAVE":
@@ -344,6 +370,238 @@ function text_visible_count(_tokens) {
 
 	return _count;
 }
+/// @description Calculates the x-coordinate for a line of text based on the specified horizontal alignment and bounding box width. This is used to position lines of text correctly when rendering with different alignments and optional bounding boxes.
+/// @param {real} _x The base x-coordinate for the text.
+/// @param {real} _line_width The width of the line of text being positioned.
+/// @param {real} _halign The horizontal alignment for the text (fa_left, fa_center, fa_right).
+/// @param {real} _box_w The width of the bounding box for the text. If -1, no bounding box is used.
+function text_aligned_line_x(_x, _line_width, _halign, _box_w) {
+	if (_box_w > 0) {
+		switch (_halign) {
+			case fa_center:
+				return _x + (_box_w - _line_width) * 0.5;
+
+			case fa_right:
+				return _x + (_box_w - _line_width);
+		}
+
+		return _x;
+	}
+
+	switch (_halign) {
+		case fa_center:
+			return _x - _line_width * 0.5;
+
+		case fa_right:
+			return _x - _line_width;
+	}
+
+	return _x;
+}
+
+function text_aligned_line_y(_y, _line_height, _content_height, _valign) {
+	switch (_valign) {
+		case fa_middle:
+			return _y + (_line_height - _content_height) * 0.5;
+
+		case fa_bottom:
+			return _y + (_line_height - _content_height);
+	}
+
+	return _y;
+}
+
+function text_measure_state_height(_state) {
+	if (_state.font != -1) {
+		draw_set_font(_state.font);
+	}
+
+	return string_height("A") * _state.yscale;
+}
+
+function text_make_line_info(_state) {
+	return {
+		width: 0,
+		halign: _state.halign,
+		valign: _state.valign,
+		height: text_measure_state_height(_state)
+	};
+}
+
+function text_measure_lines_wrapped(_tokens, _box_w, _halign, _valign) {
+	var _state = text_default_state();
+	var _stack = [];
+
+	_state.halign = _halign;
+	_state.valign = _valign;
+
+	var _lines = [text_make_line_info(_state)];
+	var _line_index = 0;
+
+	for (var _i = 0; _i < array_length(_tokens); _i++) {
+		var _token = _tokens[_i];
+
+		if (_token.type != "TEXT" && _token.type != "SPRITE") {
+			_state = text_apply_tag(_stack, _state, _token);
+
+			if (_lines[_line_index].width <= 0) {
+				_lines[_line_index].halign = _state.halign;
+				_lines[_line_index].valign = _state.valign;
+			}
+
+			_lines[_line_index].height = max(_lines[_line_index].height, text_measure_state_height(_state));
+			continue;
+		}
+
+		if (_token.type == "SPRITE") {
+			var _spr = text_asset(_token.args[0]);
+			var _spr_w = 0;
+			var _spr_h = 0;
+
+			if (_spr != -1) {
+				_spr_w = sprite_get_width(_spr) * _state.xscale;
+				_spr_h = sprite_get_height(_spr) * _state.yscale;
+			}
+
+			if (_box_w > 0 && _lines[_line_index].width + _spr_w > _box_w) {
+				_line_index++;
+				array_push(_lines, text_make_line_info(_state));
+			}
+
+			_lines[_line_index].width += _spr_w;
+			_lines[_line_index].height = max(_lines[_line_index].height, _spr_h);
+			continue;
+		}
+
+		_lines[_line_index].height = max(_lines[_line_index].height, text_measure_state_height(_state));
+
+		var _txt = _token.value;
+		var _word = "";
+
+		for (var _c = 1; _c <= string_length(_txt); _c++) {
+			var _char = string_char_at(_txt, _c);
+
+			if (_char == "\n") {
+				_lines[_line_index].width += string_width(_word) * _state.xscale;
+				_word = "";
+
+				_line_index++;
+				array_push(_lines, text_make_line_info(_state));
+				continue;
+			}
+
+			if (_char == " ") {
+				var _word_w = string_width(_word + " ") * _state.xscale;
+
+				if (_box_w > 0 && _lines[_line_index].width + _word_w > _box_w) {
+					_line_index++;
+					array_push(_lines, text_make_line_info(_state));
+				}
+
+				_lines[_line_index].width += _word_w;
+				_word = "";
+			}
+			else {
+				_word += _char;
+			}
+		}
+
+		if (_word != "") {
+			var _final_w = string_width(_word) * _state.xscale;
+
+			if (_box_w > 0 && _lines[_line_index].width + _final_w > _box_w) {
+				_line_index++;
+				array_push(_lines, text_make_line_info(_state));
+			}
+
+			_lines[_line_index].width += _final_w;
+		}
+	}
+
+	return _lines;
+}
+/// @description Measures the widths of each line of text in an array of tokens when wrapped within a specified box width. This is used to determine how to position and wrap text when rendering with bounding boxes.
+/// @param {array} _tokens The array of text tokens to measure line widths from.
+/// @param {real} _box_w The width of the bounding box for the text. If -1, no bounding box is used and lines are not wrapped.
+function text_measure_line_widths_wrapped(_tokens, _box_w) {
+	var _state = text_default_state();
+	var _stack = [];
+
+	var _line_widths = [0];
+	var _line_index = 0;
+
+	for (var _i = 0; _i < array_length(_tokens); _i++) {
+		var _token = _tokens[_i];
+
+		if (_token.type != "TEXT" && _token.type != "SPRITE") {
+			_state = text_apply_tag(_stack, _state, _token);
+			continue;
+		}
+
+		if (_token.type == "SPRITE") {
+			var _spr = text_asset(_token.args[0]);
+			var _spr_w = 0;
+
+			if (_spr != -1) {
+				_spr_w = sprite_get_width(_spr) * _state.xscale;
+			}
+
+			if (_box_w > 0 && _line_widths[_line_index] + _spr_w > _box_w) {
+				_line_index++;
+				array_push(_line_widths, 0);
+			}
+
+			_line_widths[_line_index] += _spr_w;
+			continue;
+		}
+
+		if (_state.font != -1) draw_set_font(_state.font);
+
+		var _txt = _token.value;
+		var _word = "";
+
+		for (var _c = 1; _c <= string_length(_txt); _c++) {
+			var _char = string_char_at(_txt, _c);
+
+			if (_char == "\n") {
+				_line_widths[_line_index] += string_width(_word) * _state.xscale;
+				_word = "";
+
+				_line_index++;
+				array_push(_line_widths, 0);
+				continue;
+			}
+
+			if (_char == " ") {
+				var _word_w = string_width(_word + " ") * _state.xscale;
+
+				if (_box_w > 0 && _line_widths[_line_index] + _word_w > _box_w) {
+					_line_index++;
+					array_push(_line_widths, 0);
+				}
+
+				_line_widths[_line_index] += _word_w;
+				_word = "";
+			}
+			else {
+				_word += _char;
+			}
+		}
+
+		if (_word != "") {
+			var _final_w = string_width(_word) * _state.xscale;
+
+			if (_box_w > 0 && _line_widths[_line_index] + _final_w > _box_w) {
+				_line_index++;
+				array_push(_line_widths, 0);
+			}
+
+			_line_widths[_line_index] += _final_w;
+		}
+	}
+
+	return _line_widths;
+}
 /// @description Draws an array of text tokens to the screen at a specified position, with options for alignment, bounding box, and reveal effects. This function handles the rendering of both text and sprite tokens based on the current text state.
 /// @param {array} _tokens The array of text tokens to draw.
 /// @param {real} _x The x-coordinate for the starting position of the text.
@@ -358,16 +616,21 @@ function text_draw_tokens(_tokens, _x, _y, _halign, _valign, _box_w, _box_h, _bo
 
 	var _state = text_default_state();
 	var _stack = [];
+	_state.halign = _halign;
+	_state.valign = _valign;
 
 	var _line_height = text_get_line_height(_tokens);
+	var _lines = text_measure_lines_wrapped(_tokens, _box_w, _halign, _valign);
 	var _total_width = text_measure_width_wrapped(_tokens, _box_w);
-	var _total_height = text_measure_height_wrapped(_tokens, _box_w, _line_height);
+	var _total_height = array_length(_lines) * _line_height;
 
-	var _start_x = _x;
+	var _box_x = _x;
 	var _start_y = _y;
 
-	if (_halign == fa_center) _start_x -= _total_width * 0.5;
-	if (_halign == fa_right)  _start_x -= _total_width;
+	if (_box_w > 0) {
+		if (_halign == fa_center) _box_x -= _total_width * 0.5;
+		if (_halign == fa_right)  _box_x -= _total_width;
+	}
 
 	if (_valign == fa_middle) _start_y -= _total_height * 0.5;
 	if (_valign == fa_bottom) _start_y -= _total_height;
@@ -375,15 +638,18 @@ function text_draw_tokens(_tokens, _x, _y, _halign, _valign, _box_w, _box_h, _bo
 	if (_box_draw && _box_w > 0) {
 		draw_set_alpha(0.25);
 		draw_set_color(c_white);
-		draw_rectangle(_start_x, _start_y, _start_x + _box_w, _start_y + max(_box_h, _total_height), false);
+		draw_rectangle(_box_x, _start_y, _box_x + _box_w, _start_y + max(_box_h, _total_height), false);
 		draw_set_alpha(1);
 	}
 
 	draw_set_halign(fa_left);
 	draw_set_valign(fa_top);
 
-	var _cursor_x = _start_x;
-	var _cursor_y = _start_y;
+	var _line_index = 0;
+	var _line_top_y = _start_y;
+	var _cursor_x = text_aligned_line_x(_box_x, _lines[_line_index].width, _lines[_line_index].halign, _box_w);
+	var _cursor_y = text_aligned_line_y(_line_top_y, _line_height, _lines[_line_index].height, _lines[_line_index].valign);
+	var _line_used_width = 0;
 
 	var _glyph_index = 0;
 	var _visible_drawn = 0;
@@ -404,9 +670,12 @@ function text_draw_tokens(_tokens, _x, _y, _halign, _valign, _box_w, _box_h, _bo
 				_spr_w = sprite_get_width(_spr) * _state.xscale;
 			}
 
-			if (_box_w > 0 && _cursor_x + _spr_w > _start_x + _box_w) {
-				_cursor_x = _start_x;
-				_cursor_y += _line_height * _state.yscale;
+			if (_box_w > 0 && _line_used_width + _spr_w > _box_w) {
+				_line_index++;
+				_line_used_width = 0;
+				_line_top_y += _line_height;
+				_cursor_x = text_aligned_line_x(_box_x, _lines[_line_index].width, _lines[_line_index].halign, _box_w);
+				_cursor_y = text_aligned_line_y(_line_top_y, _line_height, _lines[_line_index].height, _lines[_line_index].valign);
 			}
 
 			if (_visible_drawn < _reveal && _spr != -1) {
@@ -436,6 +705,7 @@ function text_draw_tokens(_tokens, _x, _y, _halign, _valign, _box_w, _box_h, _bo
 			}
 
 			_cursor_x += _spr_w;
+			_line_used_width += _spr_w;
 			_visible_drawn++;
 			_glyph_index++;
 			continue;
@@ -448,28 +718,38 @@ function text_draw_tokens(_tokens, _x, _y, _halign, _valign, _box_w, _box_h, _bo
 			var _char = string_char_at(_txt, _c);
 
 			if (_char == "\n") {
+				var _newline_w = string_width(_word) * _state.xscale;
+
 				text_draw_word(_word, _state, _cursor_x, _cursor_y, _glyph_index, _visible_drawn, _reveal);
-				_cursor_x += string_width(_word) * _state.xscale;
+				_cursor_x += _newline_w;
+				_line_used_width += _newline_w;
 				_visible_drawn += string_length(_word);
 				_glyph_index += string_length(_word);
 
 				_word = "";
-				_cursor_x = _start_x;
-				_cursor_y += _line_height * _state.yscale;
+				_line_index++;
+				_line_used_width = 0;
+				_line_top_y += _line_height;
+				_cursor_x = text_aligned_line_x(_box_x, _lines[_line_index].width, _lines[_line_index].halign, _box_w);
+				_cursor_y = text_aligned_line_y(_line_top_y, _line_height, _lines[_line_index].height, _lines[_line_index].valign);
 				continue;
 			}
 
 			if (_char == " ") {
 				var _word_w = string_width(_word + " ") * _state.xscale;
 
-				if (_box_w > 0 && _cursor_x + _word_w > _start_x + _box_w) {
-					_cursor_x = _start_x;
-					_cursor_y += _line_height * _state.yscale;
+				if (_box_w > 0 && _line_used_width + _word_w > _box_w) {
+					_line_index++;
+					_line_used_width = 0;
+					_line_top_y += _line_height;
+					_cursor_x = text_aligned_line_x(_box_x, _lines[_line_index].width, _lines[_line_index].halign, _box_w);
+					_cursor_y = text_aligned_line_y(_line_top_y, _line_height, _lines[_line_index].height, _lines[_line_index].valign);
 				}
 
 				text_draw_word(_word + " ", _state, _cursor_x, _cursor_y, _glyph_index, _visible_drawn, _reveal);
 
 				_cursor_x += _word_w;
+				_line_used_width += _word_w;
 				_visible_drawn += string_length(_word + " ");
 				_glyph_index += string_length(_word + " ");
 
@@ -483,14 +763,18 @@ function text_draw_tokens(_tokens, _x, _y, _halign, _valign, _box_w, _box_h, _bo
 		if (_word != "") {
 			var _final_w = string_width(_word) * _state.xscale;
 
-			if (_box_w > 0 && _cursor_x + _final_w > _start_x + _box_w) {
-				_cursor_x = _start_x;
-				_cursor_y += _line_height * _state.yscale;
+			if (_box_w > 0 && _line_used_width + _final_w > _box_w) {
+				_line_index++;
+				_line_used_width = 0;
+				_line_top_y += _line_height;
+				_cursor_x = text_aligned_line_x(_box_x, _lines[_line_index].width, _lines[_line_index].halign, _box_w);
+				_cursor_y = text_aligned_line_y(_line_top_y, _line_height, _lines[_line_index].height, _lines[_line_index].valign);
 			}
 
 			text_draw_word(_word, _state, _cursor_x, _cursor_y, _glyph_index, _visible_drawn, _reveal);
 
 			_cursor_x += _final_w;
+			_line_used_width += _final_w;
 			_visible_drawn += string_length(_word);
 			_glyph_index += string_length(_word);
 		}
@@ -821,6 +1105,30 @@ function text_asset(_name) {
 
 	return asset_get_index(_name);
 }
+
+function text_font(_name) {
+	_name = string_trim(string(_name));
+
+	if (text_is_numeric_string(_name)) {
+		return real(_name);
+	}
+
+	if (variable_global_exists("FONT_LOOKUP")) {
+		var _lookup = variable_global_get("FONT_LOOKUP");
+
+		if (variable_struct_exists(_lookup, _name)) {
+			return variable_struct_get(_lookup, _name);
+		}
+	}
+
+	var _asset = asset_get_index(_name);
+
+	if (_asset != -1 && asset_get_type(_asset) == asset_font) {
+		return _asset;
+	}
+
+	return -1;
+}
 /// @description Converts a string representing a color name into the corresponding color value. This function supports a predefined set of color names (e.g., "c_red", "c_blue") and returns the associated color constant. If the string does not match any known color name, it attempts to convert it to a real number, allowing for direct color values to be used as well.
 /// @param {string} _name The string representing the color name or value to convert.
 /// @returns {real} The color value corresponding to the input string, either from a predefined color name or directly from a real number conversion.
@@ -853,6 +1161,67 @@ function text_color(_name) {
 	return c_white;
 }
 
+function text_halign(_value) {
+	if (is_real(_value)) {
+		return _value;
+	}
+
+	_value = string_lower(string_trim(string(_value)));
+
+	switch (_value) {
+		case "fa_left":
+		case "left":
+			return fa_left;
+
+		case "fa_center":
+		case "center":
+		case "centre":
+		case "middle":
+			return fa_center;
+
+		case "fa_right":
+		case "right":
+			return fa_right;
+	}
+
+	if (text_is_numeric_string(_value)) {
+		return real(_value);
+	}
+
+	return fa_left;
+}
+
+function text_valign(_value) {
+	if (is_real(_value)) {
+		return _value;
+	}
+
+	_value = string_lower(string_trim(string(_value)));
+
+	switch (_value) {
+		case "fa_top":
+		case "top":
+			return fa_top;
+
+		case "fa_middle":
+		case "middle":
+		case "mid":
+		case "center":
+		case "centre":
+			return fa_middle;
+
+		case "fa_bottom":
+		case "bottom":
+			return fa_bottom;
+	}
+
+	if (text_is_numeric_string(_value)) {
+		return real(_value);
+	}
+
+	return fa_top;
+}
+
 /// @description Creates a text renderer object that can be drawn to the screen with various options for alignment, bounding box, and reveal effects.
 /// @param {string} _string The string to be rendered by the text object.
 function TextRenderer(_string) constructor {
@@ -882,13 +1251,25 @@ function TextRenderer(_string) constructor {
 		return self;
 	}
 
+	setBLEND = function(_COLOR, _ALPHA) {
+		draw_set_color(_COLOR);
+		draw_set_alpha(_ALPHA);
+		return self;
+	}
+
+	setALIGN = function(_halign, _valign) {
+		HALIGN = text_halign(_halign);
+		VALIGN = text_valign(_valign);
+		return self;
+	}
+
 	setHALIGN = function(_h) {
-		HALIGN = _h;
+		HALIGN = text_halign(_h);
 		return self;
 	}
 
 	setVALIGN = function(_v) {
-		VALIGN = _v;
+		VALIGN = text_valign(_v);
 		return self;
 	}
 
@@ -929,3 +1310,45 @@ function TextRenderer(_string) constructor {
 function text(_string) {
 	return new TextRenderer(_string);
 }
+
+/*Example Usage*/
+/*
+TAGS:
+[COLOR: c_colorname or colorvalue] - Changes text color
+[ALPHA: value] - Changes text alpha
+[SCALE: value] - Changes both x and y scale
+[XSCALE: value] - Changes x scale
+[YSCALE: value] - Changes y scale
+[FONT: assetname or assetindex] - Changes font
+[WAVE] - Applies a wave effect to the text
+[WOBBLE] - Applies a wobble effect to the text
+[SHAKE] - Applies a shake effect to the text
+[BOUNCE] - Applies a bounce effect to the text
+[RAINBOW: speed] - Applies a rainbow color effect to the text, with optional speed parameter
+[ROTATE: speed] - Applies a rotation effect to the text, with speed parameter
+[RESET] - Resets all text effects and formatting to default
+[SPEED: value] - Sets the speed of reveal effects
+[PAUSE: value] - Pauses the reveal effect for a certain duration (handled externally)
+[SINE: amplitude, speed] - Applies a sine wave effect to the text with specified amplitude and speed
+[JITTER: amount] - Applies a jitter effect to the text with specified intensity
+[SWAY: amount] - Applies a sway effect to the text with specified intensity
+[SPIN: speed] - Applies a spinning effect to the text with specified speed
+[ZOOM: amount] - Applies a zoom effect to the text with specified intensity
+[FADE: speed] - Applies a fading effect to the text with specified speed
+[HSV: speed] - Applies a cycling HSV color effect to the text with specified speed
+[FLASH: speed] - Applies a flashing effect to the text with specified speed
+[OFFSET: x, y] - Applies a positional offset to the text with specified x and y values
+[LINEHEIGHT: multiplier] - Multiplies the line height by the specified value
+[SPACE: amount] - Adds extra spacing between characters with the specified value
+[SPRITE: assetname or assetindex, frame, speed] - Draws a sprite inline with the text, with optional frame and animation speed parameters
+[/COLOR], [/WAVE], etc. - Closes the corresponding tag effect
+
+var myText;
+myText = text("Hello [color:c_red]World[/color]!\nThis is a [wave]text renderer[/wave] example.")
+	.setALIGN(fa_center, fa_middle)
+	.setBOX(200, 100)
+	.setBOX_DRAW(true)
+	.setREVEAL(0);
+
+myText.draw(room_width * 0.5, room_height * 0.5);
+*/

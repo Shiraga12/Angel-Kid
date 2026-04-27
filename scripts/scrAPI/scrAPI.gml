@@ -51,19 +51,26 @@ function damage(amount) {    HEALTH -= clamp(amount, 0, HEALTH); }
 /// @param {real} amount The new total health for the player.
 function setHEALTH(amount) {    HEALTH = clamp(amount, 0, 8); }
 
-
 globalvar WORLDS;
 WORLDS = [
 	new world("Tutorial Island", [
-        new stage(Room1),
+        new stage(rmStage1, -1, [
+            new cage(),
+            new cage(),
+            new cage(),
+            new cage(),
+        ]),
     ]),
+    new world("Palm Bay", []),
+    new world("Ziph Desert", []),
+    new world("Gelida", []),
 ]
 /// @desc Returns the list of worlds in the game.
 /// @returns {array} The list of worlds.
 function getWORLDS() {    return WORLDS; }
 /// @desc Adds a new world to the game.
 /// @param {string} name The name of the new world.
-function addWORLD(name) {    array_push(WORLDS, { NAME: name, STAGES: [], CLEARED: false }); }
+function addWORLD(name) {    array_push(WORLDS, new world(name, [])); }
 /// @desc Marks a world as cleared. Also marks all stages within that world as cleared.
 /// @param {string} name The name of the world to mark as cleared.
 function clearWORLD(name) {
@@ -73,7 +80,12 @@ function clearWORLD(name) {
         world.CLEARED = true;
 		for (var i = 0; i < array_length(stages); i++) {
 			stages[i].CLEARED = true;
-        }
+        }if layer_sequence_exists(layer, stageINTRO_SEQ) {
+    layer_sequence_x(stageINTRO_SEQ, camera_get_view_x(view_camera[0]) + centerX);
+    layer_sequence_y(stageINTRO_SEQ, camera_get_view_y(view_camera[0]) + centerY);
+    layer_sequence_xscale(stageINTRO_SEQ, 1 / 3);
+    layer_sequence_yscale(stageINTRO_SEQ, 1 / 3);
+}
 		var worldCompleteSound = asset_get_index("sndWorldComplete");
 		if (worldCompleteSound != -1) {
 			audio_play_sound(worldCompleteSound, 0, false);
@@ -98,7 +110,7 @@ function getWORLD(name) {
 function addSTAGE(worldNAME, stageNAME, stageROOM) {
     var world = getWORLD(worldNAME);
     if (world != undefined) {
-		array_push(world[$ "STAGES"], { NAME: stageNAME, ROOM: stageROOM, CLEARED: false });
+		array_push(world[$ "STAGES"], new stage(stageROOM));
     }
 }
 

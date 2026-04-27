@@ -1,4 +1,7 @@
 /// @desc: Initializes player variables and constants.
+
+stageINTRO_SEQ = layer_sequence_create(layer, 0, 0, seqStageIntro);
+
 SPRITES = {
     CLIMB: sAK_Climb,
     DEATH: sAK_Death,
@@ -86,7 +89,7 @@ SOUNDS = {
     FLY: asset_get_index("sndFly")
 };
 
-if (room == Room1) {
+if (room == rmStage1) {
     audio_stop_all();
 	if (SOUNDS.TUTORIAL_ISLAND != -1) {
 		audio_play_sound(SOUNDS.TUTORIAL_ISLAND, 0, true);
@@ -149,7 +152,7 @@ recoverFromDeath = function() {
     image_speed = 1;
     setHEALTH(RESPAWN_HEALTH);
 
-    if (room == Room1) {
+    if (room == rmStage1) {
         audio_stop_all();
 		if (SOUNDS.TUTORIAL_ISLAND != -1) {
 			audio_play_sound(SOUNDS.TUTORIAL_ISLAND, 0, true);

@@ -48,3 +48,13 @@ if (background_c != -1) {
     layer_x(background_c, camera_get_view_x(view_camera[0]) / 4);
     layer_y(background_c, camera_get_view_y(view_camera[0]) / 4);
 }
+
+if layer_sequence_exists(layer, stageINTRO_SEQ) {
+    layer_sequence_x(stageINTRO_SEQ, camera_get_view_x(view_camera[0]) + 342 / 2);
+    layer_sequence_y(stageINTRO_SEQ, camera_get_view_y(view_camera[0]) + 192 / 2);
+    layer_sequence_xscale(stageINTRO_SEQ, 1 / 3);
+    layer_sequence_yscale(stageINTRO_SEQ, 1 / 3);
+}
+if layer_sequence_exists(layer, stageINTRO_SEQ) && layer_sequence_is_finished(stageINTRO_SEQ) {
+    layer_sequence_destroy(stageINTRO_SEQ);
+}
