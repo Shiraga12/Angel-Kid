@@ -3,7 +3,7 @@
 // Draw Health
 
 if STATE != stateDEAD {
-    switch(HEALTH) {
+    switch(getHEALTH()) {
         case 8: draw_sprite_ext(sHealthSystem, 0, 70, 70, 2, 2, 0, c_white, 1); break;
         case 7: draw_sprite_ext(sHealthSystem, 1, 70, 70, 2, 2, 0, c_white, 1); break;
         case 6: draw_sprite_ext(sHealthSystem, 2, 70, 70, 2, 2, 0, c_white, 1); break;
@@ -24,5 +24,5 @@ draw_sprite_ext(sCoin, 0, 60, 160, 2, 2, 0, c_white, 1);
 draw_set_valign(fa_middle);
 draw_set_halign(fa_left);
 draw_set_font(FONTS[1]);
-draw_text_transformed(80, 160, string(COINS), 2, 2, 0);
+draw_text_transformed(80, 160, string(getCOINS()), 2, 2, 0);
 draw_set_font(FONTS[0]);

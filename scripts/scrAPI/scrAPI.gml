@@ -134,7 +134,7 @@
     /// @returns {struct} The world struct, or undefined if not found.
     function getWORLD(name) {
         for (var i = 0; i < array_length(global.WORLDS); i++) {
-            if (global.WORLDS[i].NAME == name) {
+            if (global.WORLDS[i].getNAME() == name) {
                 return global.WORLDS[i];
             }
         }
@@ -146,10 +146,10 @@
     /// @desc Marks a world as cleared. Also marks all stages within that world as cleared.
     /// @param {string} name The name of the world to mark as cleared.
     function clearWORLD(name) {
-        var world = getWORLD(name);
-        if (world != undefined) {
-            var stages = world[$ "STAGES"];
-            world.CLEARED = true;
+        var _world = getWORLD(name);
+        if (_world != undefined) {
+            var stages = _world[$ "STAGES"];
+            _world.CLEARED = true;
             for (var i = 0; i < array_length(stages); i++) {
                 stages[i].CLEARED = true;
             }
@@ -164,9 +164,9 @@
     /// @param {string} stageNAME The name of the stage to add.
     /// @param {asset.room} stageROOM The room associated with the stage.
     function addSTAGE(worldNAME, stageNAME, stageROOM) {
-        var world = getWORLD(worldNAME);
-        if (world != undefined) {
-            array_push(world[$ "STAGES"], new stage(stageROOM));
+        var _world = getWORLD(worldNAME);
+        if (_world != undefined) {
+            array_push(_world[$ "STAGES"], new stage(stageROOM));
         }
     }
 #endregion

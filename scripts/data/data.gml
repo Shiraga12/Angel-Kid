@@ -33,15 +33,28 @@ function world(_NAME,_STAGES)  constructor {
 function cage() constructor {
     BROKEN = false;
 
+    /// @description Checks if the cage is broken.
+    /// @returns {bool} True if the cage is broken, false otherwise.
     static isBROKEN = function() { return BROKEN; }
+    /// @description Checks if the cage is not broken.
+    /// @returns {bool} True if the cage is not broken, false otherwise.
     static isNOT_BROKEN = function() { return !BROKEN; }
 
-    static _break = function() {
-        BROKEN = true;
-    }
+    /// @description Sets the broken state of the cage.
+    /// @param {bool} _broken Whether the cage should be marked as broken.
+    static setBROKEN = function(_broken) { BROKEN = _broken; }
+
+    /// @description Marks the cage as broken.
+    static breakCAGE = function() { setBROKEN(true); }
+
+    /// @description Marks the cage as not broken.
+    static repair = function() { setBROKEN(false); }
+
+    /// @description Marks the cage as broken.
+    static _break = function() { breakCAGE(); }
 }
 /// @description Defines the stage structure for the game.
-/// @param {asset.room} _ROOM The room associated with the stage.
+/// @param {asset.gmroom} _ROOM The room associated with the stage.
 /// @param {real} _RECORD The record associated with the stage.
 /// @param {array<struct.cage>} _CAGES An array of cages within the stage.
 function stage(_ROOM, _RECORD = -1, _CAGES = []) constructor {
@@ -51,7 +64,7 @@ function stage(_ROOM, _RECORD = -1, _CAGES = []) constructor {
     CLEARED = false;
 
     /// @description Retrieves the room associated with the stage.
-    /// @returns {asset.room} The room associated with the stage.
+    /// @returns {asset.gmroom} The room associated with the stage.
     static getROOM      = function() { return ROOM; }
     /// @description Retrieves the record associated with the stage.
     /// @returns {real} The record associated with the stage.
