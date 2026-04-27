@@ -12,7 +12,7 @@
   ],
   "parent":{
     "name":"Thruston",
-    "path":"folders/NPCS/Enemies/Thruston.yy",
+    "path":"folders/NPCS/Thruston.yy",
   },
   "parentObjectId":{
     "name":"oEnemyTemplate",

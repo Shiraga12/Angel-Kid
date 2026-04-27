@@ -7,6 +7,10 @@ SPRITES = {
 HP = 1;
 isOpened = false;
 
+var WORLD = global.WORLDS[wINDEX]
+var STAGE = WORLD.getSTAGE(sINDEX)
+var CAGE = STAGE.getCAGE(cINDEX)
+
 setSTATE = function(_state) {
     if (STATE != _state) {
         STATE = _state;
@@ -22,6 +26,10 @@ openCage = function() {
     }
 
     isOpened = true;
+
+    if (CAGE.isNOT_BROKEN()) {
+        CAGE.breakCAGE();
+    }
 
     if (object_index == oFinalCage) {
         var levelCompleteSound = asset_get_index("sndLevelComplete");
@@ -93,3 +101,15 @@ stateOPENED = function() {
 };
 
 STATE = stateIDLE;
+if (CAGE.isNOT_BROKEN()) {
+    isOpened = false;
+    setSTATE(stateIDLE);
+}
+else if (CAGE.isBROKEN() && SPRITES.OPENED != noone) {
+    isOpened = true;
+    setSTATE(stateOPENED);
+}
+else {
+    isOpened = true;
+    setSTATE(stateIDLE);
+}

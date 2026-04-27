@@ -1,4 +1,7 @@
 /// @desc: Initializes player variables and constants.
+
+stageINTRO_SEQ = layer_sequence_create(layer, 0, 0, seqStageIntro);
+
 SPRITES = {
     CLIMB: sAK_Climb,
     DEATH: sAK_Death,
@@ -72,6 +75,7 @@ invulFrames = 0;
 hitstunFrames = 0;
 hurtHsp = 0;
 hurtVsp = 0;
+stageIntroResumeState = undefined;
 
 SOUNDS = {
     TUTORIAL_ISLAND: asset_get_index("sndTutorialIsland"),
@@ -86,7 +90,7 @@ SOUNDS = {
     FLY: asset_get_index("sndFly")
 };
 
-if (room == rmLevel1) {
+if (room == rmStage1) {
     audio_stop_all();
 	if (SOUNDS.TUTORIAL_ISLAND != -1) {
 		audio_play_sound(SOUNDS.TUTORIAL_ISLAND, 0, true);
@@ -149,7 +153,7 @@ recoverFromDeath = function() {
     image_speed = 1;
     setHEALTH(RESPAWN_HEALTH);
 
-    if (room == rmLevel1) {
+    if (room == rmStage1) {
         audio_stop_all();
 		if (SOUNDS.TUTORIAL_ISLAND != -1) {
 			audio_play_sound(SOUNDS.TUTORIAL_ISLAND, 0, true);
@@ -327,6 +331,24 @@ beginHaloThrow = function() {
 };
 
 #region State Functions
+stateSTAGE_INTRO = function() {
+    SP.H = 0;
+
+    if (place_meeting(x, y + 2, COLLISIONS)) {
+        SP.V = 0;
+    }
+    else if (SP.V < SP.MAX_FALL) {
+        SP.V += SP.GRV;
+    }
+
+    move_and_collide(SP.H, SP.V, COLLISIONS);
+
+    if (sprite_index != SPRITES.IDLE) {
+        sprite_index = SPRITES.IDLE;
+        image_index = 0;
+    }
+};
+
 stateFREE = function() {    
     // Movement logic
     SP.H = keyRIGHT - keyLEFT;
@@ -623,6 +645,6 @@ stateVICTORY_DANCE = function() {
     }
 }
 
-STATE = stateFREE;
+STATE = layer_sequence_exists(layer, stageINTRO_SEQ) ? stateSTAGE_INTRO : stateFREE;
 
 #endregion
