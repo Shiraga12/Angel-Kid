@@ -1,0 +1,13 @@
+{
+  "FolderOrderSettings":[
+    {"name":"Backgrounds","order":7,"path":"folders/Backgrounds.yy",},
+    {"name":"HUD","order":8,"path":"folders/HUD.yy",},
+    {"name":"Music","order":9,"path":"folders/Music.yy",},
+    {"name":"NPCS","order":10,"path":"folders/NPCS.yy",},
+    {"name":"Player","order":11,"path":"folders/Player.yy",},
+    {"name":"SFX","order":12,"path":"folders/SFX.yy",},
+    {"name":"Shaders","order":13,"path":"folders/Shaders.yy",},
+    {"name":"Tilesets","order":14,"path":"folders/Tilesets.yy",},
+  ],
+  "ResourceOrderSettings":[],
+}
