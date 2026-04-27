@@ -1,6 +1,6 @@
 {
   "$GMSound":"v2",
-  "%Name":"snd1Up",
+  "%Name":"sndOneUp",
   "audioGroupId":{
     "name":"audiogroup_default",
     "path":"audiogroups/audiogroup_default",
@@ -12,7 +12,7 @@
   "conversionMode":0,
   "duration":3.7919955,
   "exportDir":"",
-  "name":"snd1Up",
+  "name":"sndOneUp",
   "parent":{
     "name":"SFX",
     "path":"folders/SFX.yy",
@@ -21,6 +21,6 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"snd1Up.mp3",
+  "soundFile":"sndOneUp.mp3",
   "volume":1.0,
 }
