@@ -1,28 +1,11 @@
 {
   "$GMRoom":"v1",
-<<<<<<<< HEAD:rooms/rmLevel1/rmLevel1.yy
-  "%Name":"rmLevel1",
-========
   "%Name":"rmStage1",
->>>>>>>> refs/remotes/origin/main:rooms/rmStage1/rmStage1.yy
   "creationCodeFile":"",
   "inheritCode":false,
   "inheritCreationOrder":false,
   "inheritLayers":false,
   "instanceCreationOrder":[
-<<<<<<<< HEAD:rooms/rmLevel1/rmLevel1.yy
-    {"name":"inst_396C9D7E","path":"rooms/rmLevel1/rmLevel1.yy",},
-    {"name":"inst_5A25ED7D","path":"rooms/rmLevel1/rmLevel1.yy",},
-    {"name":"inst_34E8DC12","path":"rooms/rmLevel1/rmLevel1.yy",},
-    {"name":"inst_534F3A0A","path":"rooms/rmLevel1/rmLevel1.yy",},
-    {"name":"inst_61471E32","path":"rooms/rmLevel1/rmLevel1.yy",},
-    {"name":"inst_22213BDE","path":"rooms/rmLevel1/rmLevel1.yy",},
-    {"name":"inst_56792B04","path":"rooms/rmLevel1/rmLevel1.yy",},
-    {"name":"inst_780BAE71","path":"rooms/rmLevel1/rmLevel1.yy",},
-    {"name":"inst_5B1D0D4A","path":"rooms/rmLevel1/rmLevel1.yy",},
-    {"name":"inst_695891DC","path":"rooms/rmLevel1/rmLevel1.yy",},
-    {"name":"inst_4747B0D0","path":"rooms/rmLevel1/rmLevel1.yy",},
-========
     {"name":"inst_396C9D7E","path":"rooms/rmStage1/rmStage1.yy",},
     {"name":"inst_5A25ED7D","path":"rooms/rmStage1/rmStage1.yy",},
     {"name":"inst_34E8DC12","path":"rooms/rmStage1/rmStage1.yy",},
@@ -34,7 +17,6 @@
     {"name":"inst_5B1D0D4A","path":"rooms/rmStage1/rmStage1.yy",},
     {"name":"inst_695891DC","path":"rooms/rmStage1/rmStage1.yy",},
     {"name":"inst_4747B0D0","path":"rooms/rmStage1/rmStage1.yy",},
->>>>>>>> refs/remotes/origin/main:rooms/rmStage1/rmStage1.yy
   ],
   "isDnd":false,
   "layers":[
@@ -82,11 +64,7 @@
     {"$GMRBackgroundLayer":"","%Name":"BackgroundB","animationFPS":4.0,"animationSpeedType":0,"colour":4294967295,"depth":500,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"hspeed":0.0,"htiled":true,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"BackgroundB","properties":[],"resourceType":"GMRBackgroundLayer","resourceVersion":"2.0","spriteId":{"name":"sTutorialIslandBgB","path":"sprites/sTutorialIslandBgB/sTutorialIslandBgB.yy",},"stretch":false,"userdefinedAnimFPS":false,"userdefinedDepth":false,"visible":true,"vspeed":0.0,"vtiled":false,"x":0,"y":0,},
     {"$GMRBackgroundLayer":"","%Name":"BackgroundA","animationFPS":4.0,"animationSpeedType":0,"colour":4294967295,"depth":600,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"hspeed":0.0,"htiled":true,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"BackgroundA","properties":[],"resourceType":"GMRBackgroundLayer","resourceVersion":"2.0","spriteId":{"name":"sTutorialIslandBgA","path":"sprites/sTutorialIslandBgA/sTutorialIslandBgA.yy",},"stretch":false,"userdefinedAnimFPS":false,"userdefinedDepth":false,"visible":true,"vspeed":0.0,"vtiled":false,"x":0,"y":0,},
   ],
-<<<<<<<< HEAD:rooms/rmLevel1/rmLevel1.yy
-  "name":"rmLevel1",
-========
   "name":"rmStage1",
->>>>>>>> refs/remotes/origin/main:rooms/rmStage1/rmStage1.yy
   "parent":{
     "name":"Angel Kid",
     "path":"Angel Kid.yyp",
