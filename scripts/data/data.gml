@@ -46,7 +46,7 @@ function cage() constructor {
 /// @param {array<struct.cage>} _CAGES An array of cages within the stage.
 function stage(_ROOM, _RECORD = -1, _CAGES = []) constructor {
     ROOM = _ROOM;
-    RECORD = _RECORD;
+    RECORD = _RECORD; // For Time Attack mode, may be used for other things later. -1 means no record.
     CAGES = _CAGES;
     CLEARED = false;
 
