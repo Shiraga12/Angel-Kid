@@ -26,7 +26,7 @@
   "origin":4,
   "parent":{
     "name":"Title Screen",
-    "path":"folders/Title Screen.yy",
+    "path":"folders/HUD/Title Screen.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

@@ -21,7 +21,7 @@
   "name":"rmMainMenu",
   "parent":{
     "name":"Main Menu",
-    "path":"folders/Main Menu.yy",
+    "path":"folders/HUD/Main Menu.yy",
   },
   "parentRoom":null,
   "physicsSettings":{

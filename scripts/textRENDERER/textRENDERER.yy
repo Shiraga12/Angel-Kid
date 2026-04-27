@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"textRENDERER",
   "parent":{
-    "name":"Angel Kid.yyp",
-    "path":"folders/Angel Kid.yyp.yy",
+    "name":"Angel Kid",
+    "path":"Angel Kid.yyp",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

@@ -19,10 +19,6 @@ menuAnchorY = 0.42;
 menuScale = 3;
 menuSpacing = 78;
 
-transitionDuration = 180;
-transitionPixelAmount = 50;
-transitionShader = shdSonicFadeToBlackTransition;
-
 noticeText = "";
 noticeTimer = 0;
 noticeDuration = room_speed;
@@ -52,9 +48,9 @@ activateSELECTED = function() {
             item.targetRoom,
             itemX / guiWidth,
             itemY / guiHeight,
-            transitionDuration,
-            transitionPixelAmount,
-            transitionShader
+            60,
+            50,
+            shdSonicFadeToBlackTransition
         );
         return;
     }
