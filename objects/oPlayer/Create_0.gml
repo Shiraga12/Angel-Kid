@@ -86,7 +86,7 @@ SOUNDS = {
     FLY: asset_get_index("sndFly")
 };
 
-if (room == rmLevel1) {
+if (room == rmStage1) {
     audio_stop_all();
 	if (SOUNDS.TUTORIAL_ISLAND != -1) {
 		audio_play_sound(SOUNDS.TUTORIAL_ISLAND, 0, true);
@@ -149,7 +149,7 @@ recoverFromDeath = function() {
     image_speed = 1;
     setHEALTH(RESPAWN_HEALTH);
 
-    if (room == rmLevel1) {
+    if (room == rmStage1) {
         audio_stop_all();
 		if (SOUNDS.TUTORIAL_ISLAND != -1) {
 			audio_play_sound(SOUNDS.TUTORIAL_ISLAND, 0, true);

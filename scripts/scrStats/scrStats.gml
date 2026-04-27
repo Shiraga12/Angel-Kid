@@ -69,7 +69,7 @@ function setHEALTH(amount) {    global.HEALTH = clamp(amount, 0, maxHEALTH); }
 
 
 global.WORLDS = [
-	new world(worlds.tutorial, "Tutorial Island", [ rmLevel1 ]),
+	new world(worlds.tutorial, "Tutorial Island", [ rmStage1 ]),
 ];
 
 /// @desc Returns the list of global.WORLDS in the game.
