@@ -10,7 +10,7 @@
   "compression":0,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":0.0,
+  "duration":118.96163,
   "exportDir":"",
   "name":"sndThrustonHiHo",
   "parent":{
@@ -21,6 +21,6 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"Hi Ho Thruston 1.mp3",
+  "soundFile":"sndThrustonHiHo.mp3",
   "volume":1.0,
 }

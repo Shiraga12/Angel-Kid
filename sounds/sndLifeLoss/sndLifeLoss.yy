@@ -10,7 +10,7 @@
   "compression":0,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":0.0,
+  "duration":3.9444897,
   "exportDir":"",
   "name":"sndLifeLoss",
   "parent":{
@@ -21,6 +21,6 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"Life loss.mp3",
+  "soundFile":"sndLifeLoss.mp3",
   "volume":1.0,
 }

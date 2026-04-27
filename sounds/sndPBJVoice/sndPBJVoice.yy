@@ -10,7 +10,7 @@
   "compression":0,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":0.0,
+  "duration":0.62693876,
   "exportDir":"",
   "name":"sndPBJVoice",
   "parent":{
@@ -21,6 +21,6 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"PBJ voice.mp3",
+  "soundFile":"sndPBJVoice.mp3",
   "volume":1.0,
 }

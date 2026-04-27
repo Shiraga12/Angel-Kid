@@ -10,7 +10,7 @@
   "compression":0,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":0.0,
+  "duration":0.4702041,
   "exportDir":"",
   "name":"sndEnemyHurt2",
   "parent":{
@@ -21,6 +21,6 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"enemy hurt 2.mp3",
+  "soundFile":"sndEnemyHurt2.mp3",
   "volume":1.0,
 }
