@@ -75,6 +75,7 @@ invulFrames = 0;
 hitstunFrames = 0;
 hurtHsp = 0;
 hurtVsp = 0;
+stageIntroResumeState = undefined;
 
 SOUNDS = {
     TUTORIAL_ISLAND: asset_get_index("sndTutorialIsland"),
@@ -330,6 +331,24 @@ beginHaloThrow = function() {
 };
 
 #region State Functions
+stateSTAGE_INTRO = function() {
+    SP.H = 0;
+
+    if (place_meeting(x, y + 2, COLLISIONS)) {
+        SP.V = 0;
+    }
+    else if (SP.V < SP.MAX_FALL) {
+        SP.V += SP.GRV;
+    }
+
+    move_and_collide(SP.H, SP.V, COLLISIONS);
+
+    if (sprite_index != SPRITES.IDLE) {
+        sprite_index = SPRITES.IDLE;
+        image_index = 0;
+    }
+};
+
 stateFREE = function() {    
     // Movement logic
     SP.H = keyRIGHT - keyLEFT;
@@ -626,6 +645,6 @@ stateVICTORY_DANCE = function() {
     }
 }
 
-STATE = stateFREE;
+STATE = layer_sequence_exists(layer, stageINTRO_SEQ) ? stateSTAGE_INTRO : stateFREE;
 
 #endregion
