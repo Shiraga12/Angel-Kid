@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"data",
+  "%Name":"scrSaving",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"data",
+  "name":"scrSaving",
   "parent":{
     "name":"Angel Kid",
     "path":"Angel Kid.yyp",

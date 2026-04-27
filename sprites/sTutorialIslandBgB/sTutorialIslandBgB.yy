@@ -1,27 +1,27 @@
 {
   "$GMSprite":"v2",
-  "%Name":"sTutorialIsland_BG_A",
+  "%Name":"sTutorialIslandBgB",
   "bboxMode":0,
   "bbox_bottom":492,
   "bbox_left":0,
   "bbox_right":767,
-  "bbox_top":0,
+  "bbox_top":41,
   "collisionKind":1,
   "collisionTolerance":0,
   "DynamicTexturePage":false,
   "edgeFiltering":false,
   "For3D":false,
   "frames":[
-    {"$GMSpriteFrame":"v1","%Name":"cb275b8e-c4cf-45d9-814f-e8a5e1cc03a6","name":"cb275b8e-c4cf-45d9-814f-e8a5e1cc03a6","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"bd0133f0-2dd8-4312-a51e-cf15b7a039a6","name":"bd0133f0-2dd8-4312-a51e-cf15b7a039a6","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
   ],
   "gridX":0,
   "gridY":0,
   "height":493,
   "HTile":false,
   "layers":[
-    {"$GMImageLayer":"","%Name":"9b5cb888-91c3-46d4-a3cc-e2056e7918d2","blendMode":0,"displayName":"default","isLocked":false,"name":"9b5cb888-91c3-46d4-a3cc-e2056e7918d2","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
+    {"$GMImageLayer":"","%Name":"251ea22a-142d-461c-8e1c-60403ce23f12","blendMode":0,"displayName":"default","isLocked":false,"name":"251ea22a-142d-461c-8e1c-60403ce23f12","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
   ],
-  "name":"sTutorialIsland_BG_A",
+  "name":"sTutorialIslandBgB",
   "nineSlice":null,
   "origin":4,
   "parent":{
@@ -33,7 +33,7 @@
   "resourceVersion":"2.0",
   "sequence":{
     "$GMSequence":"v1",
-    "%Name":"sTutorialIsland_BG_A",
+    "%Name":"sTutorialIslandBgB",
     "autoRecord":true,
     "backdropHeight":768,
     "backdropImageOpacity":0.5,
@@ -57,7 +57,7 @@
       "resourceType":"KeyframeStore<MomentsEventKeyframe>",
       "resourceVersion":"2.0",
     },
-    "name":"sTutorialIsland_BG_A",
+    "name":"sTutorialIslandBgB",
     "playback":1,
     "playbackSpeed":4.0,
     "playbackSpeedType":0,
@@ -69,8 +69,8 @@
     "tracks":[
       {"$GMSpriteFramesTrack":"","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"$KeyframeStore<SpriteFrameKeyframe>":"","Keyframes":[
             {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
-                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"cb275b8e-c4cf-45d9-814f-e8a5e1cc03a6","path":"sprites/sTutorialIsland_BG_A/sTutorialIsland_BG_A.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
-              },"Disabled":false,"id":"70a71223-ae2a-4815-86f2-dcf50be9e263","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"bd0133f0-2dd8-4312-a51e-cf15b7a039a6","path":"sprites/sTutorialIslandBgB/sTutorialIslandBgB.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"ba9b005a-f9d7-4315-93f5-716686ba94e8","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
           ],"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"2.0",},"modifiers":[],"name":"frames","resourceType":"GMSpriteFramesTrack","resourceVersion":"2.0","spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange":null,

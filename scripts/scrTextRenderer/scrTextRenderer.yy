@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"textRENDERER",
+  "%Name":"scrTextRenderer",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"textRENDERER",
+  "name":"scrTextRenderer",
   "parent":{
     "name":"Angel Kid",
     "path":"Angel Kid.yyp",

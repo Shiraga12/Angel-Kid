@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"scrAPI",
+  "%Name":"scrConstructors",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"scrAPI",
+  "name":"scrConstructors",
   "parent":{
     "name":"Angel Kid",
     "path":"Angel Kid.yyp",
