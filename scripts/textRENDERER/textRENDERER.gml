@@ -91,12 +91,21 @@ function text_default_state() {
 		halign: fa_left,
 		valign: fa_top,
 
+		shadow_color: c_black,
+		shadow_alpha: 0,
+		shadow_x: 0,
+		shadow_y: 0,
+
+		outline_color: c_black,
+		outline_alpha: 0,
+		outline_size: 0,
+
 		wave: false,
 		wobble: false,
 		shake: false,
 		bounce: false,
 		rainbow: 0,
-		rotate: 0,
+		angle: 0,
 
         sine_amp: 0,
         sine_speed: 0,
@@ -131,12 +140,21 @@ function text_clone_state(_s) {
 		halign: _s.halign,
 		valign: _s.valign,
 
+		shadow_color: _s.shadow_color,
+		shadow_alpha: _s.shadow_alpha,
+		shadow_x: _s.shadow_x,
+		shadow_y: _s.shadow_y,
+		
+		outline_color: _s.outline_color,
+		outline_alpha: _s.outline_alpha,
+		outline_size: _s.outline_size,
+
 		wave: _s.wave,
 		wobble: _s.wobble,
 		shake: _s.shake,
 		bounce: _s.bounce,
 		rainbow: _s.rainbow,
-		rotate: _s.rotate,
+		angle: _s.angle,
 
         sine_amp: _s.sine_amp,
         sine_speed: _s.sine_speed,
@@ -244,6 +262,58 @@ function text_apply_tag(_stack, _state, _token) {
 			}
 		break;
 
+		case "LEFT":
+			text_push_state(_stack, _state);
+			_state.halign = fa_left;
+		break;
+
+		case "CENTER":
+		case "CENTRE":
+			text_push_state(_stack, _state);
+			_state.halign = fa_center;
+		break;
+
+		case "RIGHT":
+			text_push_state(_stack, _state);
+			_state.halign = fa_right;
+		break;
+
+		case "TOP":
+			text_push_state(_stack, _state);
+			_state.valign = fa_top;
+		break;
+
+		case "MIDDLE":
+		case "MID":
+			text_push_state(_stack, _state);
+			_state.valign = fa_middle;
+		break;
+
+		case "BOTTOM":
+			text_push_state(_stack, _state);
+			_state.valign = fa_bottom;
+		break;
+
+		case "ALPHA":
+			text_push_state(_stack, _state);
+			_state.alpha = real(_token.args[0]);
+		break;
+
+		case "SHADOW":
+			text_push_state(_stack, _state);
+			_state.shadow_color = text_color(_token.args[0]);
+			_state.shadow_x = (array_length(_token.args) > 1) ? real(_token.args[1]) : 1;
+			_state.shadow_y = (array_length(_token.args) > 2) ? real(_token.args[2]) : _state.shadow_x;
+			_state.shadow_alpha = (array_length(_token.args) > 3) ? real(_token.args[3]) : 1;
+		break;
+
+		case "OUTLINE":
+			text_push_state(_stack, _state);
+			_state.outline_color = text_color(_token.args[0]);
+			_state.outline_size = (array_length(_token.args) > 1) ? abs(real(_token.args[1])) : 1;
+			_state.outline_alpha = (array_length(_token.args) > 2) ? real(_token.args[2]) : 1;
+		break;
+
 		case "WAVE":
 			text_push_state(_stack, _state);
 			_state.wave = true;
@@ -274,8 +344,9 @@ function text_apply_tag(_stack, _state, _token) {
 		break;
 
 		case "ROTATE":
+		case "ANGLE":
 			text_push_state(_stack, _state);
-			_state.rotate = real(_token.args[0]);
+			_state.angle = real(_token.args[0]);
 		break;
 
 		case "RESET":
@@ -338,12 +409,25 @@ function text_apply_tag(_stack, _state, _token) {
             _state.offset_y = real(_token.args[1]);
         break;
 
+		case "XOFFSET":
+			text_push_state(_stack, _state);
+			_state.offset_x = real(_token.args[0]);
+		break;
+
+		case "YOFFSET":
+			text_push_state(_stack, _state);
+			_state.offset_y = real(_token.args[0]);
+		break;
+
         case "LINEHEIGHT":
+		case "LEADING":
             text_push_state(_stack, _state);
             _state.line_height_mul = real(_token.args[0]);
         break;
 
         case "SPACE":
+		case "LETTERSPACE":
+		case "TRACKING":
             text_push_state(_stack, _state);
             _state.space_add = real(_token.args[0]);
         break;
@@ -369,6 +453,18 @@ function text_visible_count(_tokens) {
 	}
 
 	return _count;
+}
+
+function text_string_width_scaled(_text, _state) {
+	if (_text == "") {
+		return 0;
+	}
+
+	if (_state.font != -1) {
+		draw_set_font(_state.font);
+	}
+
+	return string_width(_text) * _state.xscale + max(0, string_length(_text) - 1) * _state.space_add;
 }
 /// @description Calculates the x-coordinate for a line of text based on the specified horizontal alignment and bounding box width. This is used to position lines of text correctly when rendering with different alignments and optional bounding boxes.
 /// @param {real} _x The base x-coordinate for the text.
@@ -416,7 +512,7 @@ function text_measure_state_height(_state) {
 		draw_set_font(_state.font);
 	}
 
-	return string_height("A") * _state.yscale;
+	return string_height("A") * _state.yscale * _state.line_height_mul;
 }
 
 function text_make_line_info(_state) {
@@ -482,7 +578,7 @@ function text_measure_lines_wrapped(_tokens, _box_w, _halign, _valign) {
 			var _char = string_char_at(_txt, _c);
 
 			if (_char == "\n") {
-				_lines[_line_index].width += string_width(_word) * _state.xscale;
+				_lines[_line_index].width += text_string_width_scaled(_word, _state);
 				_word = "";
 
 				_line_index++;
@@ -491,7 +587,7 @@ function text_measure_lines_wrapped(_tokens, _box_w, _halign, _valign) {
 			}
 
 			if (_char == " ") {
-				var _word_w = string_width(_word + " ") * _state.xscale;
+				var _word_w = text_string_width_scaled(_word + " ", _state);
 
 				if (_box_w > 0 && _lines[_line_index].width + _word_w > _box_w) {
 					_line_index++;
@@ -507,7 +603,7 @@ function text_measure_lines_wrapped(_tokens, _box_w, _halign, _valign) {
 		}
 
 		if (_word != "") {
-			var _final_w = string_width(_word) * _state.xscale;
+			var _final_w = text_string_width_scaled(_word, _state);
 
 			if (_box_w > 0 && _lines[_line_index].width + _final_w > _box_w) {
 				_line_index++;
@@ -564,7 +660,7 @@ function text_measure_line_widths_wrapped(_tokens, _box_w) {
 			var _char = string_char_at(_txt, _c);
 
 			if (_char == "\n") {
-				_line_widths[_line_index] += string_width(_word) * _state.xscale;
+				_line_widths[_line_index] += text_string_width_scaled(_word, _state);
 				_word = "";
 
 				_line_index++;
@@ -573,7 +669,7 @@ function text_measure_line_widths_wrapped(_tokens, _box_w) {
 			}
 
 			if (_char == " ") {
-				var _word_w = string_width(_word + " ") * _state.xscale;
+				var _word_w = text_string_width_scaled(_word + " ", _state);
 
 				if (_box_w > 0 && _line_widths[_line_index] + _word_w > _box_w) {
 					_line_index++;
@@ -589,7 +685,7 @@ function text_measure_line_widths_wrapped(_tokens, _box_w) {
 		}
 
 		if (_word != "") {
-			var _final_w = string_width(_word) * _state.xscale;
+			var _final_w = text_string_width_scaled(_word, _state);
 
 			if (_box_w > 0 && _line_widths[_line_index] + _final_w > _box_w) {
 				_line_index++;
@@ -718,7 +814,7 @@ function text_draw_tokens(_tokens, _x, _y, _halign, _valign, _box_w, _box_h, _bo
 			var _char = string_char_at(_txt, _c);
 
 			if (_char == "\n") {
-				var _newline_w = string_width(_word) * _state.xscale;
+				var _newline_w = text_string_width_scaled(_word, _state);
 
 				text_draw_word(_word, _state, _cursor_x, _cursor_y, _glyph_index, _visible_drawn, _reveal);
 				_cursor_x += _newline_w;
@@ -736,7 +832,7 @@ function text_draw_tokens(_tokens, _x, _y, _halign, _valign, _box_w, _box_h, _bo
 			}
 
 			if (_char == " ") {
-				var _word_w = string_width(_word + " ") * _state.xscale;
+				var _word_w = text_string_width_scaled(_word + " ", _state);
 
 				if (_box_w > 0 && _line_used_width + _word_w > _box_w) {
 					_line_index++;
@@ -761,7 +857,7 @@ function text_draw_tokens(_tokens, _x, _y, _halign, _valign, _box_w, _box_h, _bo
 		}
 
 		if (_word != "") {
-			var _final_w = string_width(_word) * _state.xscale;
+			var _final_w = text_string_width_scaled(_word, _state);
 
 			if (_box_w > 0 && _line_used_width + _final_w > _box_w) {
 				_line_index++;
@@ -807,7 +903,7 @@ function text_draw_word(_word, _state, _x, _y, _glyph_index, _visible_drawn, _re
 
 		var _xx = _cursor_x;
 		var _yy = _y;
-		var _rot = _state.rotate;
+		var _rot = _state.angle;
 
         // WAVE
 		if (_state.wave) {
@@ -888,11 +984,34 @@ function text_draw_word(_word, _state, _x, _y, _glyph_index, _visible_drawn, _re
             }
         }
 
+		if (_state.shadow_alpha > 0 && (_state.shadow_x != 0 || _state.shadow_y != 0)) {
+			draw_set_alpha(_alpha * _state.shadow_alpha);
+			draw_set_color(_state.shadow_color);
+			draw_text_transformed(_xx + _state.shadow_x, _yy + _state.shadow_y, _char, _xs, _ys, _rot);
+		}
+
+		if (_state.outline_alpha > 0 && _state.outline_size > 0) {
+			var _outline_size = max(1, ceil(_state.outline_size));
+
+			draw_set_alpha(_alpha * _state.outline_alpha);
+			draw_set_color(_state.outline_color);
+
+			for (var _ox = -_outline_size; _ox <= _outline_size; _ox++) {
+				for (var _oy = -_outline_size; _oy <= _outline_size; _oy++) {
+					if (_ox == 0 && _oy == 0) continue;
+					draw_text_transformed(_xx + _ox, _yy + _oy, _char, _xs, _ys, _rot);
+				}
+			}
+		}
+
 		draw_set_alpha(_alpha);
         draw_set_color(_draw_color);
         draw_text_transformed(_xx, _yy, _char, _xs, _ys, _rot);
 
 		_cursor_x += string_width(_char) * _state.xscale;
+		if (_i < string_length(_word)) {
+			_cursor_x += _state.space_add;
+		}
 		_visible_drawn++;
 		_glyph_index++;
 	}
@@ -913,13 +1032,13 @@ function text_get_line_height(_tokens) {
 
 			if (_state.font != -1) {
 				draw_set_font(_state.font);
-				_height = max(_height, string_height("A"));
+				_height = max(_height, string_height("A") * _state.yscale * _state.line_height_mul);
 			}
 		}
 
-		if (_token.type == "SCALE" || _token.type == "YSCALE") {
+		if (_token.type == "SCALE" || _token.type == "YSCALE" || _token.type == "LINEHEIGHT" || _token.type == "LEADING") {
 			_state = text_apply_tag(_stack, _state, _token);
-			_height = max(_height, string_height("A") * _state.yscale);
+			_height = max(_height, string_height("A") * _state.yscale * _state.line_height_mul);
 		}
 	}
 
@@ -960,6 +1079,10 @@ function text_measure_width_wrapped(_tokens, _box_w) {
 				}
 				else {
 					_line_width += string_width(_char) * _state.xscale;
+
+					if (_c < string_length(_txt) && string_char_at(_txt, _c + 1) != "\n") {
+						_line_width += _state.space_add;
+					}
 				}
 			}
 		}
@@ -1029,7 +1152,7 @@ function text_measure_height_wrapped(_tokens, _box_w, _line_height) {
 				}
 
 				if (_char == " ") {
-					var _word_w = string_width(_word + " ") * _state.xscale;
+					var _word_w = text_string_width_scaled(_word + " ", _state);
 
 					if (_box_w > 0 && _line_width + _word_w > _box_w) {
 						_lines++;
@@ -1045,7 +1168,7 @@ function text_measure_height_wrapped(_tokens, _box_w, _line_height) {
 			}
 
 			if (_word != "") {
-				var _final_w = string_width(_word) * _state.xscale;
+				var _final_w = text_string_width_scaled(_word, _state);
 
 				if (_box_w > 0 && _line_width + _final_w > _box_w) {
 					_lines++;
@@ -1222,8 +1345,94 @@ function text_valign(_value) {
 	return fa_top;
 }
 
-/// @description Creates a text renderer object that can be drawn to the screen with various options for alignment, bounding box, and reveal effects.
-/// @param {string} _string The string to be rendered by the text object.
+function text_make_sprite_token(_asset, _frame, _speed, _offset_x, _offset_y, _angle) {
+	return {
+		type: "SPRITE",
+		args: [
+			_asset,
+			is_undefined(_frame) ? 0 : _frame,
+			is_undefined(_speed) ? 0 : _speed,
+			is_undefined(_offset_x) ? 0 : _offset_x,
+			is_undefined(_offset_y) ? 0 : _offset_y,
+			is_undefined(_angle) ? 0 : _angle
+		]
+	};
+}
+
+function text_apply_tag_transform(_token, _transform) {
+	var _args = [];
+
+	for (var _i = 0; _i < array_length(_token.args); _i++) {
+		array_push(_args, _token.args[_i]);
+	}
+
+	switch (_token.type) {
+		case "OFFSET":
+			if (array_length(_args) > 0) _args[0] = real(_args[0]) + _transform.offset_x;
+			if (array_length(_args) > 1) _args[1] = real(_args[1]) + _transform.offset_y;
+		break;
+
+		case "XOFFSET":
+			if (array_length(_args) > 0) _args[0] = real(_args[0]) + _transform.offset_x;
+		break;
+
+		case "YOFFSET":
+			if (array_length(_args) > 0) _args[0] = real(_args[0]) + _transform.offset_y;
+		break;
+
+		case "ANGLE":
+		case "ROTATE":
+			if (array_length(_args) > 0) _args[0] = real(_args[0]) + _transform.angle;
+		break;
+	}
+
+	return {
+		type: _token.type,
+		close: variable_struct_exists(_token, "close") ? _token.close : undefined,
+		args: _args
+	};
+}
+
+function text_apply_transform(_tokens, _transform) {
+	var _new_tokens = [];
+
+	for (var _i = 0; _i < array_length(_tokens); _i++) {
+		var _token = _tokens[_i];
+
+		if (_token.type == "TEXT") {
+			array_push(_new_tokens, _token);
+		}
+		else if (_token.type == "SPRITE") {
+			var _args = [];
+			array_copy(_args, 0, _token.args, 0, array_length(_token.args));
+
+			if (array_length(_args) < 6) {
+				array_resize(_args, 6);
+				for (var _j = 0; _j < 6; _j++) {
+					if (is_undefined(_args[_j])) {
+						_args[_j] = 0;
+					}
+				}
+			}
+
+			_args[3] += _transform.offset_x;
+			_args[4] += _transform.offset_y;
+
+			if (_transform.angle != 0) {
+				_args[5] += _transform.angle;
+			}
+
+			array_push(_new_tokens, text_make_sprite_token(_args[0], _args[1], _args[2], _args[3], _args[4], _args[5]));
+		}
+		else {
+			var _new_token = text_apply_tag_transform(_token, _transform);
+			array_push(_new_tokens, _new_token);
+		}
+	}
+
+	return _new_tokens;
+}
+
 function TextRenderer(_string) constructor {
 
 	/*===================================================*
@@ -1273,6 +1482,16 @@ function TextRenderer(_string) constructor {
 		return self;
 	}
 
+	transform = function(_xscale, _yscale, _angle) {
+		var _state = text_default_state();
+		_state.xscale = _xscale;
+		_state.yscale = _yscale;
+		_state.angle = _angle;
+
+		TOKENS = text_apply_transform(TOKENS, _state);
+		return self;
+	}
+
 	setBOX = function(_w, _h = -1) {
 		BOX_W = _w;
 		BOX_H = _h;
@@ -1316,16 +1535,24 @@ function text(_string) {
 TAGS:
 [COLOR: c_colorname or colorvalue] - Changes text color
 [ALPHA: value] - Changes text alpha
+[SHADOW: color, x, y, alpha] - Draws a shadow behind the text
+[OUTLINE: color, size, alpha] - Draws an outline around the text
 [SCALE: value] - Changes both x and y scale
 [XSCALE: value] - Changes x scale
 [YSCALE: value] - Changes y scale
 [FONT: assetname or assetindex] - Changes font
+[ALIGN: horizontal, vertical] - Sets horizontal and vertical alignment for subsequent lines
+[HALIGN: left|center|right or fa_*] - Sets horizontal alignment for subsequent lines
+[VALIGN: top|middle|bottom or fa_*] - Sets vertical alignment for subsequent lines
+[LEFT], [CENTER], [RIGHT] - Shorthand horizontal alignment tags
+[TOP], [MIDDLE], [BOTTOM] - Shorthand vertical alignment tags
 [WAVE] - Applies a wave effect to the text
 [WOBBLE] - Applies a wobble effect to the text
 [SHAKE] - Applies a shake effect to the text
 [BOUNCE] - Applies a bounce effect to the text
 [RAINBOW: speed] - Applies a rainbow color effect to the text, with optional speed parameter
-[ROTATE: speed] - Applies a rotation effect to the text, with speed parameter
+[ROTATE: angle] - Rotates the text by a fixed angle
+[ANGLE: angle] - Alias for ROTATE
 [RESET] - Resets all text effects and formatting to default
 [SPEED: value] - Sets the speed of reveal effects
 [PAUSE: value] - Pauses the reveal effect for a certain duration (handled externally)
@@ -1338,8 +1565,13 @@ TAGS:
 [HSV: speed] - Applies a cycling HSV color effect to the text with specified speed
 [FLASH: speed] - Applies a flashing effect to the text with specified speed
 [OFFSET: x, y] - Applies a positional offset to the text with specified x and y values
+[XOFFSET: value] - Applies a positional offset only on the x-axis
+[YOFFSET: value] - Applies a positional offset only on the y-axis
 [LINEHEIGHT: multiplier] - Multiplies the line height by the specified value
+[LEADING: multiplier] - Alias for LINEHEIGHT
 [SPACE: amount] - Adds extra spacing between characters with the specified value
+[LETTERSPACE: amount] - Alias for SPACE
+[TRACKING: amount] - Alias for SPACE
 [SPRITE: assetname or assetindex, frame, speed] - Draws a sprite inline with the text, with optional frame and animation speed parameters
 [/COLOR], [/WAVE], etc. - Closes the corresponding tag effect
 

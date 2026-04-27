@@ -1,20 +1,46 @@
 /// API - 
 
-globalvar LIVES;
-LIVES = 3;
-/// @desc Returns the current number of lives the player has.
-/// @returns {real} The player's current life count.
-function getLIVES() {    return LIVES;  }
-/// @desc Adds a specified amount of lives to the player's total.
-/// @param {real} amount The number of lives to add.
-function gainLIVES(amount) {    LIVES += amount; }
-/// @desc Subtracts a specified amount of lives from the player's total.
-/// @param {real} amount The number of lives to subtract.
-function loseLIVES(amount) {    LIVES -= amount; }
-/// @desc Sets the player's life count to a specific amount.
-/// @param {real} amount The new total number of lives for the player.
-function setLIVES(amount) {    LIVES = amount;  }
+#region LIVES
+    globalvar LIVES;
+    LIVES = 3;
+    /// @desc Returns the current number of lives the player has.
+    /// @returns {real} The player's current life count.
+    function getLIVES() {    return LIVES;  }
+    /// @desc Adds a specified amount of lives to the player's total.
+    /// @param {real} amount The number of lives to add.
+    function gainLIVES(amount) {    LIVES += amount; }
+    /// @desc Subtracts a specified amount of lives from the player's total.
+    /// @param {real} amount The number of lives to subtract.
+    function loseLIVES(amount) {    LIVES -= amount; }
+    /// @desc Sets the player's life count to a specific amount.
+    /// @param {real} amount The new total number of lives for the player.
+    function setLIVES(amount) {    LIVES = amount;  }
+#endregion
 
+#region SCORE
+    globalvar SCORE;
+    SCORE = 0;
+    /// @desc Returns the player's current score.
+    /// @returns {real} The player's current score.
+    function getSCORE() {    return SCORE;  }
+    /// @desc Adds a specified amount of points to the player's score.
+    /// @param {real} amount The number of points to add.
+    function addSCORE(amount) {    SCORE += amount; }
+    /// @desc Sets the player's score to a specific amount.
+    /// @param {real} amount The new total score for the player.
+    function setSCORE(amount) {    SCORE = amount;  }
+#endregion
+
+#region TIME
+    globalvar TIME;
+    TIME = 0;
+    /// @desc Returns the current time in seconds.
+    /// @returns {real} The current time in seconds.
+    function getTIME() {    return TIME;  }
+    function addTIME(amount) {    TIME += amount; }
+    /// @desc Sets the current time to a specific amount.
+    /// @param {real} amount The new time in seconds.
+    function setTIME(amount) {    TIME = amount;  }
 globalvar COINS;
 COINS = 0;
 /// @desc Returns the current number of coins the player has.
@@ -80,12 +106,7 @@ function clearWORLD(name) {
         world.CLEARED = true;
 		for (var i = 0; i < array_length(stages); i++) {
 			stages[i].CLEARED = true;
-        }if layer_sequence_exists(layer, stageINTRO_SEQ) {
-    layer_sequence_x(stageINTRO_SEQ, camera_get_view_x(view_camera[0]) + centerX);
-    layer_sequence_y(stageINTRO_SEQ, camera_get_view_y(view_camera[0]) + centerY);
-    layer_sequence_xscale(stageINTRO_SEQ, 1 / 3);
-    layer_sequence_yscale(stageINTRO_SEQ, 1 / 3);
-}
+        }
 		var worldCompleteSound = asset_get_index("sndWorldComplete");
 		if (worldCompleteSound != -1) {
 			audio_play_sound(worldCompleteSound, 0, false);
