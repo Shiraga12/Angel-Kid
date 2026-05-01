@@ -14,47 +14,9 @@ COLLISIONS = [
     layer_tilemap_get_id("tmSOLID")
 ];
 
-facing = 1;
-stateTimer = 0;
 HP = 1;
-isDefeated = false;
 
-takeHit = method(id, function(_power, _sourceX) {
-    if (isDefeated) {
-        return;
-    }
-
-    HP -= _power;
-    facing = sign(x - _sourceX);
-    if (facing == 0) {
-        facing = 1;
-    }
-
-    var enemyHurtSound = asset_get_index((HP <= 0) ? "sndEnemyHurt2" : "sndEnemyHurt");
-    if (enemyHurtSound != -1) {
-        audio_play_sound(enemyHurtSound, 0, false);
-    }
-
-    if (HP <= 0) {
-        isDefeated = true;
-        stateTimer = CRASH_TIME;
-        setSTATE(stateDEFEAT);
-    }
-});
-willCrash = function() {
-    var wallAhead = place_meeting(x + (facing * 8), y, COLLISIONS);
-    var floorAhead = place_meeting(x + (facing * EDGE_CHECK), y + 12, COLLISIONS);
-
-    return wallAhead || !floorAhead;
-};
-
-setSTATE = function(_state) {
-    if (STATE != _state) {
-        STATE = _state;
-        image_index = 0;
-    }
-};
-stateDASH = function() {
+stateDASH = new stateFUNCS(function() {
     if (sprite_index != SPRITES.DASH) {
         sprite_index = SPRITES.DASH;
         image_index = 0;
@@ -63,14 +25,14 @@ stateDASH = function() {
     image_xscale = facing;
     HSP = DASH_SPEED * facing;
 
-    if (willCrash()) {
+    if (shouldTURN_AROUND()) {
         stateTimer = CRASH_TIME;
         setSTATE(stateDEFEAT);
     }
 
     move_and_collide(HSP, VSP, COLLISIONS);
-};
-stateDEFEAT = function() {
+});
+stateDEFEAT = new stateFUNCS(function() {
     if (!isDefeated) {
         isDefeated = true;
         HSP = -facing * 2.5;
@@ -101,6 +63,6 @@ stateDEFEAT = function() {
     if (y > room_height + sprite_height) {
         instance_destroy();
     }
-};
+});
 
-STATE = stateDASH;
+state = stateDASH;

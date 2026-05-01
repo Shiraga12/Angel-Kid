@@ -1,3 +1,5 @@
+event_inherited();
+
 SPRITES = {
     DEFEAT: sJayCopter_Defeated,
     FLY: sJayCopter_Flying
@@ -7,43 +9,12 @@ ATTACK_POWER = 1;
 BOMB_DROP_TIME = 45;
 FLY_RANGE = 48;
 FLY_SPEED = 1;
-HP = 1;
 
-facing = 1;
+HP = 1;
 homeX = x;
 dropTimer = BOMB_DROP_TIME;
-isDefeated = false;
 
-setSTATE = function(_state) {
-    if (STATE != _state) {
-        STATE = _state;
-        image_index = 0;
-    }
-};
-
-takeHit = method(id, function(_power, _sourceX) {
-    if (isDefeated) {
-        return;
-    }
-
-HP -= _power;
-    facing = sign(x - _sourceX);
-    if (facing == 0) {
-        facing = 1;
-    }
-
-    var enemyHurtSound = asset_get_index((HP <= 0) ? "sndEnemyHurt2" : "sndEnemyHurt");
-    if (enemyHurtSound != -1) {
-        audio_play_sound(enemyHurtSound, 0, false);
-    }
-
-    if (HP <= 0) {
-        isDefeated = true;
-        setSTATE(stateDEFEAT);
-    }
-});
-
-stateFLY = function() {
+stateFLY = new stateFUNCS(function() {
     if (sprite_index != SPRITES.FLY) {
         sprite_index = SPRITES.FLY;
         image_index = 0;
@@ -61,9 +32,9 @@ stateFLY = function() {
         instance_create_layer(x, y + sprite_height * 0.5, layer, oJayCopterBomb);
         dropTimer = BOMB_DROP_TIME;
     }
-};
+});
 
-stateDEFEAT = function() {
+stateDEFEAT = new stateFUNCS(function() {
     if (sprite_index != SPRITES.DEFEAT) {
         sprite_index = SPRITES.DEFEAT;
         image_index = 0;
@@ -75,6 +46,6 @@ stateDEFEAT = function() {
     if (y > room_height + sprite_height) {
         instance_destroy();
     }
-};
+});
 
-STATE = stateFLY;
+state = stateFLY;

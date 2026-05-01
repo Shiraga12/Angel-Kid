@@ -3,10 +3,9 @@ stateFREE = new stateFUNCS(
 		if place_meeting(x,y,oPlayer) {
 			state = stateDESTROY;
 			addCOINS(1)
-			var coinSound = asset_get_index("sndCoin");
-			if (coinSound != -1) {
-				audio_play_sound(coinSound, 0, false);
-			}
+			var coinSound = sndCoin;
+			audio_play_sound(coinSound, 0, false);
+			
 			image_index = 0
 		}
 	}

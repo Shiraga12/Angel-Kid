@@ -46,15 +46,13 @@ ATTACK_POWER = {
     GROUND_POUND: 2
 };
 
-bossWallObject = asset_get_index("oBossArenaWall");
+bossWallObject = oBossArenaWall;
 
 COLLISIONS = [
     layer_tilemap_get_id("tmSOLID")
 ];
 
-if (bossWallObject != -1) {
-    array_push(COLLISIONS, bossWallObject);
-}
+array_push(COLLISIONS, bossWallObject);
 
 HSP = 0;
 VSP = 0;
@@ -86,25 +84,16 @@ uiTargetAlpha = 0;
 leftWallId = noone;
 rightWallId = noone;
 
-setSTATE = function(_state) {
-    if (STATE != _state) {
-        STATE = _state;
-        image_index = 0;
-        image_speed = 1;
-        attackApplied = false;
-    }
-};
-
-setAttackCooldown = function(_base) {
+setATTACK_COOLDOWN = function(_base) {
     attackCooldown = max(8, _base - ((phase - 1) * 4));
 };
 
-showBanner = function(_text, _time) {
+showBANNER = function(_text, _time) {
     bannerText = _text;
     bannerTimer = _time;
 };
 
-getPhaseLabel = function() {
+getPHASE_LABEL = function() {
     switch (phase) {
         case 1:
             return "Warm Up";
@@ -115,15 +104,7 @@ getPhaseLabel = function() {
     }
 };
 
-getPlayerTarget = function() {
-    if (!instance_exists(oPlayer)) {
-        return noone;
-    }
-
-    return instance_nearest(x, y, oPlayer);
-};
-
-faceTarget = function(_target) {
+faceTARGET = function(_target) {
     if (!instance_exists(_target)) {
         return;
     }
@@ -137,7 +118,7 @@ faceTarget = function(_target) {
     }
 };
 
-createArenaWall = function(_wallX) {
+createARENA_WALL = function(_wallX) {
     if (bossWallObject == -1) {
         return noone;
     }
@@ -148,17 +129,17 @@ createArenaWall = function(_wallX) {
     return wall;
 };
 
-lockArena = function() {
+lockARENA = function() {
     if (arenaLocked) {
         return;
     }
 
     arenaLocked = true;
-    leftWallId = createArenaWall(homeX - ARENA_RANGE - ARENA_WALL_MARGIN);
-    rightWallId = createArenaWall(homeX + ARENA_RANGE + ARENA_WALL_MARGIN);
+    leftWallId = createARENA_WALL(homeX - ARENA_RANGE - ARENA_WALL_MARGIN);
+    rightWallId = createARENA_WALL(homeX + ARENA_RANGE + ARENA_WALL_MARGIN);
 };
 
-unlockArena = function() {
+unlockARENA = function() {
     arenaLocked = false;
 
     if (instance_exists(leftWallId)) {
@@ -177,7 +158,7 @@ unlockArena = function() {
     rightWallId = noone;
 };
 
-releaseFinalCages = function() {
+releaseFINAL_CAGES = function() {
     with (oFinalCage) {
         if (variable_instance_exists(id, "openCage")) {
             openCage();
@@ -185,7 +166,7 @@ releaseFinalCages = function() {
     }
 };
 
-getTargetPhase = function() {
+getTARGET_PHASE = function() {
     var hpRatio = HP / MAX_HP;
 
     if (hpRatio <= 0.34) {
@@ -199,55 +180,51 @@ getTargetPhase = function() {
     return 1;
 };
 
-beginPhaseShift = function(_phase) {
+beginPHASE_SHIFT = function(_phase) {
     phase = clamp(_phase, 1, MAX_PHASE);
     HSP = 0;
     VSP = 0;
     stateTimer = PHASE_CHANGE_TIME;
 
-    var pbjPhaseSound = asset_get_index("sndPBJVoice2");
-    if (pbjPhaseSound != -1) {
-        audio_play_sound(pbjPhaseSound, 0, false);
-    }
+    var pbjPhaseSound = sndPBJVoice2;
+    audio_play_sound(pbjPhaseSound, 0, false);
 
-    showBanner(getPhaseLabel(), PHASE_CHANGE_TIME);
-    setAttackCooldown(ATTACK_COOLDOWN + 10);
+    showBANNER(getPHASE_LABEL(), PHASE_CHANGE_TIME);
+    setATTACK_COOLDOWN(ATTACK_COOLDOWN + 10);
     setSTATE(statePHASE_CHANGE);
 };
 
-startEncounter = function() {
+startENCOUNTER = function() {
     if (encounterStarted) {
         return;
     }
 
     encounterStarted = true;
 
-    var pbjIntroSound = asset_get_index("sndPBJVoice");
-    if (pbjIntroSound != -1) {
-        audio_play_sound(pbjIntroSound, 0, false);
-    }
+    var pbjIntroSound = sndPBJVoice;
+    audio_play_sound(pbjIntroSound, 0, false);
 
-    lockArena();
-    showBanner(BOSS_NAME, INTRO_TIME);
+    lockARENA();
+    showBANNER(BOSS_NAME, INTRO_TIME);
     stateTimer = INTRO_TIME;
     uiTargetAlpha = 1;
     setSTATE(stateINTRO);
 };
 
-triggerDefeatSequence = function() {
+triggerDEFEAT_SEQUENCE = function() {
     if (encounterCleared) {
         return;
     }
 
     encounterCleared = true;
     isDefeated = true;
-    unlockArena();
-    releaseFinalCages();
+    unlockARENA();
+    releaseFINAL_CAGES();
     uiTargetAlpha = 0;
-    showBanner("Victory", VICTORY_TIME);
+    showBANNER("Victory", VICTORY_TIME);
 };
 
-applyFacingHit = function(_range, _top, _bottom, _power) {
+applyFACING_HIT = function(_range, _top, _bottom, _power) {
     attackApplied = true;
 
     var leftBound = x;
@@ -268,7 +245,7 @@ applyFacingHit = function(_range, _top, _bottom, _power) {
     }
 };
 
-applyRadialHit = function(_range, _top, _bottom, _power) {
+applyRADIAL_HIT = function(_range, _top, _bottom, _power) {
     attackApplied = true;
 
     var player = collision_rectangle(x - _range, y - _top, x + _range, y + _bottom, oPlayer, false, true);
@@ -278,7 +255,7 @@ applyRadialHit = function(_range, _top, _bottom, _power) {
     }
 };
 
-spawnProjectile = function() {
+spawnPROJECTILE = function() {
     var projectile = instance_create_layer(
         x + (facing * 28),
         y - 12,
@@ -291,8 +268,8 @@ spawnProjectile = function() {
     variable_instance_set(projectile, "attackPower", ATTACK_POWER.PROJECTILE);
 };
 
-chooseAttack = function() {
-    var player = getPlayerTarget();
+chooseATTACK = function() {
+    var player = instance_nearest(x, y, oPlayer);
     if (!instance_exists(player)) {
         return;
     }
@@ -363,51 +340,7 @@ chooseAttack = function() {
     }
 };
 
-takeHit = method(id, function(_power, _sourceX) {
-    if (isDefeated) {
-        return;
-    }
-
-    if (!encounterStarted) {
-        startEncounter();
-        return;
-    }
-
-    if (!introComplete || STATE == statePHASE_CHANGE) {
-        return;
-    }
-
-    HP -= _power;
-    facing = sign(x - _sourceX);
-    if (facing == 0) {
-        facing = 1;
-    }
-
-    var enemyHurtSound = asset_get_index((HP <= 0) ? "sndEnemyHurt2" : "sndEnemyHurt");
-    if (enemyHurtSound != -1) {
-        audio_play_sound(enemyHurtSound, 0, false);
-    }
-
-    HSP = 0;
-
-    if (HP <= 0) {
-        triggerDefeatSequence();
-        setSTATE(stateDEFEAT);
-        return;
-    }
-
-    var targetPhase = getTargetPhase();
-    if (targetPhase > phase) {
-        beginPhaseShift(targetPhase);
-        return;
-    }
-
-    stateTimer = HIT_TIME;
-    setAttackCooldown(ATTACK_COOLDOWN + 2);
-    setSTATE(stateHIT);
-});
-
-stateDORMANT = function() {
+stateDORMANT = new stateFUNCS(function() {
     HSP = 0;
     image_xscale = facing;
 
@@ -416,16 +349,16 @@ stateDORMANT = function() {
         image_index = 0;
     }
 
-    var player = getPlayerTarget();
+    var player = instance_nearest(x, y, oPlayer);
     if (instance_exists(player)) {
-        faceTarget(player);
+        faceTARGET(player);
         if (abs(player.x - x) <= ARENA_TRIGGER_RANGE && abs(player.y - y) <= 80) {
-            startEncounter();
+            startENCOUNTER();
         }
     }
-};
+});
 
-stateINTRO = function() {
+stateINTRO = new stateFUNCS(function() {
     HSP = 0;
     image_xscale = facing;
 
@@ -434,20 +367,20 @@ stateINTRO = function() {
         image_index = 0;
     }
 
-    var player = getPlayerTarget();
+    var player = instance_nearest(x, y, oPlayer);
     if (instance_exists(player)) {
-        faceTarget(player);
+        faceTARGET(player);
     }
 
     stateTimer -= 1;
     if (stateTimer <= 0) {
         introComplete = true;
-        setAttackCooldown(ATTACK_COOLDOWN);
+        setATTACK_COOLDOWN(ATTACK_COOLDOWN);
         setSTATE(stateIDLE);
     }
-};
+});
 
-statePHASE_CHANGE = function() {
+statePHASE_CHANGE = new stateFUNCS(function() {
     HSP = 0;
     VSP = 0;
     image_xscale = facing;
@@ -462,9 +395,9 @@ statePHASE_CHANGE = function() {
     if (stateTimer <= 0) {
         setSTATE(stateIDLE);
     }
-};
+});
 
-stateIDLE = function() {
+stateIDLE = new stateFUNCS(function() {
     if (!encounterStarted) {
         setSTATE(stateDORMANT);
         return;
@@ -475,7 +408,7 @@ stateIDLE = function() {
         return;
     }
 
-    var player = getPlayerTarget();
+    var player = instance_nearest(x, y, oPlayer);
     var desiredSpeed = 0;
     var maxMoveSpeed = MOVE_SPEED + ((phase - 1) * 0.15);
 
@@ -491,7 +424,7 @@ stateIDLE = function() {
     if (instance_exists(player)) {
         var distanceX = player.x - x;
         if (abs(distanceX) <= AGGRO_RANGE) {
-            faceTarget(player);
+            faceTARGET(player);
 
             if (abs(distanceX) > JAB_RANGE * 0.75) {
                 desiredSpeed = clamp(distanceX * 0.05, -maxMoveSpeed, maxMoveSpeed);
@@ -499,7 +432,7 @@ stateIDLE = function() {
 
             if (attackCooldown <= 0) {
                 HSP = 0;
-                chooseAttack();
+                chooseATTACK();
                 return;
             }
         }
@@ -515,9 +448,9 @@ stateIDLE = function() {
 
     HSP = desiredSpeed;
     image_xscale = facing;
-};
+});
 
-statePROJECTILE_ATTACK = function() {
+statePROJECTILE_ATTACK = new stateFUNCS(function() {
     HSP = 0;
     image_xscale = facing;
 
@@ -528,16 +461,16 @@ statePROJECTILE_ATTACK = function() {
 
     if (!attackApplied && image_index >= 1) {
         attackApplied = true;
-        spawnProjectile();
+        spawnPROJECTILE();
     }
 
     if (image_index >= image_number - 1) {
-        setAttackCooldown(ATTACK_COOLDOWN + 10);
+        setATTACK_COOLDOWN(ATTACK_COOLDOWN + 10);
         setSTATE(stateIDLE);
     }
-};
+});
 
-stateJAB = function() {
+stateJAB = new stateFUNCS(function() {
     HSP = 0;
     image_xscale = facing;
 
@@ -547,16 +480,16 @@ stateJAB = function() {
     }
 
     if (!attackApplied && image_index >= 1) {
-        applyFacingHit(JAB_RANGE, 26, 20, ATTACK_POWER.JAB);
+        applyFACING_HIT(JAB_RANGE, 26, 20, ATTACK_POWER.JAB);
     }
 
     if (image_index >= image_number - 1) {
-        setAttackCooldown(ATTACK_COOLDOWN);
+        setATTACK_COOLDOWN(ATTACK_COOLDOWN);
         setSTATE(stateIDLE);
     }
-};
+});
 
-stateUPPERCUT = function() {
+stateUPPERCUT = new stateFUNCS(function() {
     HSP = 0;
     image_xscale = facing;
     image_speed = 0;
@@ -567,17 +500,17 @@ stateUPPERCUT = function() {
     }
 
     if (!attackApplied) {
-        applyFacingHit(UPPERCUT_RANGE, 48, 16, ATTACK_POWER.UPPERCUT);
+        applyFACING_HIT(UPPERCUT_RANGE, 48, 16, ATTACK_POWER.UPPERCUT);
     }
 
     stateTimer -= 1;
     if (stateTimer <= 0) {
-        setAttackCooldown(ATTACK_COOLDOWN + 6);
+        setATTACK_COOLDOWN(ATTACK_COOLDOWN + 6);
         setSTATE(stateIDLE);
     }
-};
+});
 
-stateDASH_ATTACK = function() {
+stateDASH_ATTACK = new stateFUNCS(function() {
     image_xscale = facing;
 
     if (sprite_index != SPRITES.DASH) {
@@ -594,16 +527,16 @@ stateDASH_ATTACK = function() {
     dashDistance += abs(HSP);
 
     if (!attackApplied) {
-        applyFacingHit(54, 24, 18, ATTACK_POWER.DASH);
+        applyFACING_HIT(54, 24, 18, ATTACK_POWER.DASH);
     }
 
     if (dashDistance >= DASH_RANGE || place_meeting(x + (facing * 10), y, COLLISIONS) || image_index >= image_number - 1) {
         stateTimer = 10;
         setSTATE(stateSKID);
     }
-};
+});
 
-stateSKID = function() {
+stateSKID = new stateFUNCS(function() {
     HSP *= 0.7;
     image_xscale = facing;
     image_speed = 0;
@@ -616,12 +549,12 @@ stateSKID = function() {
     stateTimer -= 1;
     if (stateTimer <= 0) {
         HSP = 0;
-        setAttackCooldown(ATTACK_COOLDOWN + 4);
+        setATTACK_COOLDOWN(ATTACK_COOLDOWN + 4);
         setSTATE(stateIDLE);
     }
-};
+});
 
-stateJUMP_ATTACK = function() {
+stateJUMP_ATTACK = new stateFUNCS(function() {
     image_xscale = facing;
     image_speed = 0;
 
@@ -647,9 +580,9 @@ stateJUMP_ATTACK = function() {
         stateTimer = 12;
         setSTATE(stateGROUND_POUND);
     }
-};
+});
 
-stateGROUND_POUND = function() {
+stateGROUND_POUND = new stateFUNCS(function() {
     HSP = 0;
     VSP = 0;
     image_speed = 0;
@@ -660,17 +593,17 @@ stateGROUND_POUND = function() {
     }
 
     if (!attackApplied) {
-        applyRadialHit(GROUND_POUND_RANGE, 22, 22, ATTACK_POWER.GROUND_POUND);
+        applyRADIAL_HIT(GROUND_POUND_RANGE, 22, 22, ATTACK_POWER.GROUND_POUND);
     }
 
     stateTimer -= 1;
     if (stateTimer <= 0) {
-        setAttackCooldown(ATTACK_COOLDOWN + 12);
+        setATTACK_COOLDOWN(ATTACK_COOLDOWN + 12);
         setSTATE(stateIDLE);
     }
-};
+});
 
-stateHIT = function() {
+stateHIT = new stateFUNCS(function() {
     HSP = 0;
     image_xscale = facing;
     image_speed = 0;
@@ -684,9 +617,9 @@ stateHIT = function() {
     if (stateTimer <= 0) {
         setSTATE(stateIDLE);
     }
-};
+});
 
-stateDEFEAT = function() {
+stateDEFEAT = new stateFUNCS(function() {
     if (!defeatStarted) {
         defeatStarted = true;
         HSP = -facing * 2.2;
@@ -708,6 +641,6 @@ stateDEFEAT = function() {
     if (y > room_height + sprite_height) {
         instance_destroy();
     }
-};
+});
 
-STATE = stateDORMANT;
+state = stateDORMANT;

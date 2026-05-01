@@ -12,8 +12,8 @@ var STAGE = WORLD.getSTAGE(sINDEX)
 var CAGE = STAGE.getCAGE(cINDEX)
 
 setSTATE = function(_state) {
-    if (STATE != _state) {
-        STATE = _state;
+    if (state != _state) {
+        state = _state;
         image_index = 0;
     }
 };
@@ -32,16 +32,12 @@ openCage = function() {
     }
 
     if (object_index == oFinalCage) {
-        var levelCompleteSound = asset_get_index("sndLevelComplete");
-        if (levelCompleteSound != -1) {
-            audio_play_sound(levelCompleteSound, 0, false);
-        }
+        var levelCompleteSound = sndLevelComplete;
+        audio_play_sound(levelCompleteSound, 0, false);
     }
     else if (object_index == oCage) {
-        var secretFoundSound = asset_get_index("sndSecretFound");
-        if (secretFoundSound != -1) {
-            audio_play_sound(secretFoundSound, 0, false);
-        }
+        var secretFoundSound = sndSecretFound;
+        audio_play_sound(secretFoundSound, 0, false);
     }
 
     onOpen();
@@ -54,7 +50,7 @@ openCage = function() {
     }
 };
 
-takeHit = method(id, function(_power, _sourceX) {
+takeHIT = method(id, function(_power, _sourceX) {
     if (isOpened) {
         return;
     }
@@ -100,7 +96,7 @@ stateOPENED = function() {
     image_speed = 0;
 };
 
-STATE = stateIDLE;
+state = stateIDLE;
 if (CAGE.isNOT_BROKEN()) {
     isOpened = false;
     setSTATE(stateIDLE);

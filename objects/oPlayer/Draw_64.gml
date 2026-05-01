@@ -2,7 +2,7 @@
 
 // Draw global.HEALTH
 
-if STATE != stateDEAD {
+if state != stateDEAD {
     switch(global.HEALTH) {
         case 8: draw_sprite_ext(sHealthSystem, 0, 70, 70, 2, 2, 0, c_white, 1); break;
         case 7: draw_sprite_ext(sHealthSystem, 1, 70, 70, 2, 2, 0, c_white, 1); break;

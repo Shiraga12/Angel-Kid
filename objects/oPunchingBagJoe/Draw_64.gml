@@ -18,7 +18,7 @@ if (uiAlpha > 0.01) {
     draw_set_halign(fa_center);
     draw_set_valign(fa_middle);
     draw_text(barLeft + (UI_BAR_WIDTH * 0.5), barTop - 8, BOSS_NAME);
-    draw_text(barLeft + (UI_BAR_WIDTH * 0.5), barTop + 22, getPhaseLabel());
+    draw_text(barLeft + (UI_BAR_WIDTH * 0.5), barTop + 22, getPHASE_LABEL());
     draw_set_alpha(1);
 }
 

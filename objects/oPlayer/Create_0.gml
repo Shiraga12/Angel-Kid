@@ -74,34 +74,30 @@ hurtHsp = 0;
 hurtVsp = 0;
 
 SOUNDS = {
-    TUTORIAL_ISLAND: asset_get_index("sndTutorialIsland"),
-    GAME_OVER: asset_get_index("sndGameOver"),
-    GOOBER_SCARE: asset_get_index("sndGooberScare"),
-    HALO_THROW: asset_get_index("sndHaloThrow"),
-    HIT_IMPACT: asset_get_index("sndHitImpact2"),
-    HIT_LANDED: asset_get_index("sndHitLanded"),
-    JUMP: asset_get_index("sndJump"),
-    LIFE_LOSS: asset_get_index("sndLifeLoss"),
-    PUNCH_HOLD: asset_get_index("sndPunchHold"),
-    FLY: asset_get_index("sndFly")
+    TUTORIAL_ISLAND: sndTutorialIsland,
+    GAME_OVER: sndGameOver,
+    GOOBER_SCARE: sndGooberScare,
+    HALO_THROW: sndHaloThrow,
+    HIT_IMPACT: sndHitImpact2,
+    HIT_LANDED: sndHitLanded,
+    JUMP: sndJump,
+    LIFE_LOSS: sndLifeLoss,
+    PUNCH_HOLD: sndPunchHold,
+    FLY: sndFly
 };
 
 if (room == rmStage1) {
     audio_stop_all();
-	if (SOUNDS.TUTORIAL_ISLAND != -1) {
-		audio_play_sound(SOUNDS.TUTORIAL_ISLAND, 0, true);
-	}
+	audio_play_sound(SOUNDS.TUTORIAL_ISLAND, 0, true);
 }
 
-var bossWallObject = asset_get_index("oBossArenaWall");
+var bossWallObject = oBossArenaWall;
 
 COLLISIONS = [
     layer_tilemap_get_id("tmSOLID")
 ];
 
-if (bossWallObject != -1) {
-    array_push(COLLISIONS, bossWallObject);
-}
+array_push(COLLISIONS, bossWallObject);
 
 resetActionState = function() {
     attackApplied = false;
@@ -117,7 +113,7 @@ setRespawnPoint = method(id, function(_x, _y) {
 });
 
 canTakeDamage = method(id, function() {
-    return STATE != stateDEAD && invulFrames <= 0;
+    return state != stateDEAD && invulFrames <= 0;
 });
 
 beginDeath = function() {
@@ -135,7 +131,7 @@ beginDeath = function() {
     SP.V = 0;
     image_alpha = 1;
     image_speed = 1;
-    STATE = stateDEAD;
+    state = stateDEAD;
 };
 
 recoverFromDeath = function() {
@@ -151,13 +147,11 @@ recoverFromDeath = function() {
 
     if (room == rmStage1) {
         audio_stop_all();
-		if (SOUNDS.TUTORIAL_ISLAND != -1) {
-			audio_play_sound(SOUNDS.TUTORIAL_ISLAND, 0, true);
-		}
+		audio_play_sound(SOUNDS.TUTORIAL_ISLAND, 0, true);
     }
 
     invulFrames = RESPAWN_INVUL_TIME;
-    STATE = stateFREE;
+    state = stateFREE;
 };
 
 takeDamage = method(id, function(_amount, _sourceX, _knockbackH, _knockbackV) {
@@ -212,16 +206,16 @@ takeDamage = method(id, function(_amount, _sourceX, _knockbackH, _knockbackV) {
     hurtHsp = knockDirection * _knockbackH;
     hurtVsp = -abs(_knockbackV);
     image_speed = 1;
-    STATE = stateHIT;
+    state = stateHIT;
     return true;
 });
 
 playerAttack = function() {
-    var cageObject = asset_get_index("oCageTemplate");
-    var jayCopterObject = asset_get_index("oJayCopter");
-    var pbjObject = asset_get_index("oPunchingBagJoe");
-    var shelldonObject = asset_get_index("oShelldon");
-    var thrustonObject = asset_get_index("oThruston");
+    var cageObject = oCageTemplate;
+    var jayCopterObject = oJayCopter;
+    var pbjObject = oPunchingBagJoe;
+    var shelldonObject = oShelldon;
+    var thrustonObject = oThruston;
     var offsetX = image_xscale * currentAttackRange;
     var leftBound = x;
     var rightBound = x;
@@ -265,8 +259,8 @@ playerAttack = function() {
         if (instance_exists(target)) {
             didHit = true;
             with (target) {
-                if (variable_instance_exists(id, "takeHit")) {
-                    takeHit(other.currentAttackPower, other.x);
+                if (variable_instance_exists(id, "takeHIT")) {
+                    takeHIT(other.currentAttackPower, other.x);
                 }
             }
         }
@@ -289,7 +283,7 @@ beginPunch = function() {
     }
 
     attackApplied = false;
-    STATE = statePUNCHING;
+    state = statePUNCHING;
 };
 throwHalo = function() {
     if (haloInstanceId != noone) {
@@ -323,7 +317,7 @@ beginHaloThrow = function() {
     }
 
     haloThrown = false;
-    STATE = stateHALO_THROW;
+    state = stateHALO_THROW;
 };
 
 #region State Functions
@@ -335,7 +329,7 @@ stateFREE = function() {
         SP.V = 0;
         if (keyJUMP) {
             SP.V = -SP.JUMP;
-            STATE = stateJUMPING;
+            state = stateJUMPING;
         }
     }
     else if (SP.V < SP.MAX_FALL) {
@@ -383,17 +377,17 @@ stateFREE = function() {
     }
 
     if (keyFLY) {
-        STATE = stateFLYING;
+        state = stateFLYING;
     }
     else if (keyHALO_PRESSED && !(haloInstanceId != noone)) {
         beginHaloThrow();
     }
     else if (keyPUNCH_PRESSED) {
         chargeFrames = 0;
-        STATE = statePUNCH_CHARGING;
+        state = statePUNCH_CHARGING;
     }
     else if (keyPOSE) {
-        STATE = stateGOOBER_POSE_SCARE;
+        state = stateGOOBER_POSE_SCARE;
     }
 
 }
@@ -403,7 +397,7 @@ stateJUMPING = function() {
     SP.H *= keyboard_check(vk_shift) ? SP.RUN : SP.WALK;
     if (place_meeting(x, y + 2, COLLISIONS)) {
         SP.V = 0;   
-        STATE = stateAIR_TO_GROUND;     
+        state = stateAIR_TO_GROUND;     
     }
     else if (SP.V < SP.MAX_FALL) {
         SP.V += SP.GRV;
@@ -441,7 +435,7 @@ stateFLYING = function() {
     }
 
     if !keyFLY {
-        STATE = stateFREE;
+        state = stateFREE;
     }
 }
 
@@ -493,7 +487,7 @@ statePUNCHING = function() {
         chargeFrames = 0;
         currentAttackPower = ATTACK.POWER;
         currentAttackRange = ATTACK.RANGE;
-        STATE = stateFREE;
+        state = stateFREE;
     }
 }
 
@@ -524,7 +518,7 @@ stateHALO_THROW = function() {
 
 	// End animation
 	if (image_index >= image_number - 1) {
-	    STATE = stateFREE;
+	    state = stateFREE;
 	}
 }
 
@@ -548,7 +542,7 @@ stateAIR_TO_GROUND = function() {
 		}
     }
     if image_index >= image_number - 1 {
-        STATE = stateFREE;
+        state = stateFREE;
     }
 }
 
@@ -565,7 +559,7 @@ stateGOOBER_POSE_SCARE = function() {
 		}
     }
     if image_index >= image_number - 1 {
-        STATE = stateFREE;
+        state = stateFREE;
     }
 }
 
@@ -593,7 +587,7 @@ stateHIT = function() {
     if (hitstunFrames <= 0 && place_meeting(x, y + 2, COLLISIONS)) {
         hurtHsp = 0;
         hurtVsp = 0;
-        STATE = stateFREE;
+        state = stateFREE;
     }
 }
 
@@ -623,6 +617,6 @@ stateVICTORY_DANCE = function() {
     }
 }
 
-STATE = stateFREE;
+state = stateFREE;
 
 #endregion

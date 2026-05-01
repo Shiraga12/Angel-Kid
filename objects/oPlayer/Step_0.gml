@@ -13,13 +13,13 @@ keyJUMP = keyboard_check_pressed(vk_space);
 keyPOSE = keyboard_check_pressed(ord("C"));
 
 
-STATE()
+state()
 
 if (invulFrames > 0) {
     invulFrames -= 1;
 }
 
-if (STATE != stateDEAD && invulFrames > 0) {
+if (state != stateDEAD && invulFrames > 0) {
     image_alpha = (((invulFrames div 4) mod 2) == 0) ? 0.35 : 1;
 }
 else {

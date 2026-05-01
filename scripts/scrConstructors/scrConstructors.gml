@@ -1,4 +1,6 @@
-function stateFUNCS(_STEP, _DRAW = draw_self) constructor {
+function empty() {}
+
+function stateFUNCS(_STEP = empty, _DRAW = draw_self) constructor {
 	STEP = method(other, _STEP);
 	DRAW = method(other, _DRAW);
 	
