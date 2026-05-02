@@ -10,7 +10,6 @@ SPRITES = {
     HIT: sAK_Hit,
     IDLE: sAK_Idle,
     JUMP: sAK_Jump,
-    LANDING: sAK_Land,
     LOOK: {
         DOWN: sAK_Lookdown,
         UP: sAK_Lookup,

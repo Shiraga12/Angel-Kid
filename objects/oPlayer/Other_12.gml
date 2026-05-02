@@ -82,22 +82,24 @@ stateFREE = function() {
 stateJUMPING = function() {
     SP.H = keyRIGHT - keyLEFT;
     SP.H *= keyboard_check(vk_shift) ? SP.RUN : SP.WALK;
+	
     if (place_meeting(x, y + 2, COLLISIONS)) {
         SP.V = 0;   
-        state = stateAIR_TO_GROUND;     
+		audio_play_sound(SOUNDS.HIT_LANDED, 0, false);
+		state = stateFREE;
+		return;
     }
-    else if (SP.V < SP.MAX_FALL) {
+	
+    if (SP.V < SP.MAX_FALL) {
         SP.V += SP.GRV;
     }
+	
     move_and_collide(SP.H, SP.V, COLLISIONS);
 
-    // Transition to jumping state
     if sprite_index != SPRITES.JUMP {
         sprite_index = SPRITES.JUMP;
         image_index = 0;
-		if (SOUNDS.JUMP != -1) {
-			audio_play_sound(SOUNDS.JUMP, 0, false);
-		}
+		audio_play_sound(SOUNDS.JUMP, 0, false);
     }
 	if (SP.H != 0) {
         image_xscale = sign(SP.H);
@@ -116,9 +118,7 @@ stateFLYING = function() {
     if sprite_index != SPRITES.FLY {
         sprite_index = SPRITES.FLY;
         image_index = 0;
-		if (SOUNDS.FLY != -1) {
-			audio_play_sound(SOUNDS.FLY, 0, false);
-		}
+		audio_play_sound(SOUNDS.FLY, 0, false);
     }
 
     if !keyFLY {
@@ -139,9 +139,7 @@ statePUNCH_CHARGING = function() {
     if (sprite_index != SPRITES.PUNCH_CHARGE) {
         sprite_index = SPRITES.PUNCH_CHARGE;
         image_index = 0;
-		if (SOUNDS.PUNCH_HOLD != -1) {
-			audio_play_sound(SOUNDS.PUNCH_HOLD, 0, false);
-		}
+		audio_play_sound(SOUNDS.PUNCH_HOLD, 0, false);
     }
 
     if (keyPUNCH_RELEASED) {
@@ -224,9 +222,7 @@ stateAIR_TO_GROUND = function() {
     if sprite_index != SPRITES.LANDING {
         sprite_index = SPRITES.LANDING;
         image_index = 0;
-		if (SOUNDS.HIT_LANDED != -1) {
-			audio_play_sound(SOUNDS.HIT_LANDED, 0, false);
-		}
+		audio_play_sound(SOUNDS.HIT_LANDED, 0, false);
     }
     if image_index >= image_number - 1 {
         state = stateFREE;
@@ -241,9 +237,7 @@ stateGOOBER_POSE_SCARE = function() {
     if sprite_index != SPRITES.GOOBER_POSE_SCARE {
         sprite_index = SPRITES.GOOBER_POSE_SCARE;
         image_index = 0;
-		if (SOUNDS.GOOBER_SCARE != -1) {
-			audio_play_sound(SOUNDS.GOOBER_SCARE, 0, false);
-		}
+		audio_play_sound(SOUNDS.GOOBER_SCARE, 0, false);
     }
     if image_index >= image_number - 1 {
         state = stateFREE;

@@ -48,6 +48,7 @@
   },
   "name":"Angel Kid",
   "resources":[
+    {"id":{"name":"gameCamera","path":"objects/gameCamera/gameCamera.yy",},},
     {"id":{"name":"gameSaver","path":"objects/gameSaver/gameSaver.yy",},},
     {"id":{"name":"objParallaxBg","path":"objects/objParallaxBg/objParallaxBg.yy",},},
     {"id":{"name":"oBlocko","path":"objects/oBlocko/oBlocko.yy",},},
@@ -151,7 +152,6 @@
     {"id":{"name":"sAK_Hit","path":"sprites/sAK_Hit/sAK_Hit.yy",},},
     {"id":{"name":"sAK_Idle","path":"sprites/sAK_Idle/sAK_Idle.yy",},},
     {"id":{"name":"sAK_Jump","path":"sprites/sAK_Jump/sAK_Jump.yy",},},
-    {"id":{"name":"sAK_Land","path":"sprites/sAK_Land/sAK_Land.yy",},},
     {"id":{"name":"sAK_Lookdown","path":"sprites/sAK_Lookdown/sAK_Lookdown.yy",},},
     {"id":{"name":"sAK_Lookup","path":"sprites/sAK_Lookup/sAK_Lookup.yy",},},
     {"id":{"name":"sAK_PowerGiven","path":"sprites/sAK_PowerGiven/sAK_PowerGiven.yy",},},

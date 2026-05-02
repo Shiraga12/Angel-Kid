@@ -20,6 +20,7 @@
     {"name":"Tilesets","order":14,"path":"folders/Tilesets.yy",},
   ],
   "ResourceOrderSettings":[
+    {"name":"gameCamera","order":16,"path":"objects/gameCamera/gameCamera.yy",},
     {"name":"oGoldUi","order":15,"path":"objects/oGoldUi/oGoldUi.yy",},
     {"name":"oHalo","order":16,"path":"objects/oHalo/oHalo.yy",},
     {"name":"sAK_Climb","order":10,"path":"sprites/sAK_Climb/sAK_Climb.yy",},
@@ -32,7 +33,6 @@
     {"name":"sAK_Hit","order":5,"path":"sprites/sAK_Hit/sAK_Hit.yy",},
     {"name":"sAK_Idle","order":2,"path":"sprites/sAK_Idle/sAK_Idle.yy",},
     {"name":"sAK_Jump","order":15,"path":"sprites/sAK_Jump/sAK_Jump.yy",},
-    {"name":"sAK_Land","order":18,"path":"sprites/sAK_Land/sAK_Land.yy",},
     {"name":"sAK_Lookdown","order":17,"path":"sprites/sAK_Lookdown/sAK_Lookdown.yy",},
     {"name":"sAK_Lookup","order":8,"path":"sprites/sAK_Lookup/sAK_Lookup.yy",},
     {"name":"sAK_PowerGiven","order":11,"path":"sprites/sAK_PowerGiven/sAK_PowerGiven.yy",},

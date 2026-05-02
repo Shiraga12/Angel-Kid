@@ -46,8 +46,6 @@ ATTACK_POWER = {
     GROUND_POUND: 2
 };
 
-bossWallObject = oBossArenaWall;
-
 COLLISIONS = [
     layer_tilemap_get_id("tmSOLID")
 ];
@@ -119,11 +117,7 @@ faceTARGET = function(_target) {
 };
 
 createARENA_WALL = function(_wallX) {
-    if (bossWallObject == -1) {
-        return noone;
-    }
-
-    var wall = instance_create_layer(_wallX, room_height * 0.5, layer, bossWallObject);
+    var wall = instance_create_layer(_wallX, room_height * 0.5, layer, oBossArenaWall);
     variable_instance_set(wall, "wallWidth", ARENA_WALL_WIDTH);
     variable_instance_set(wall, "wallHeight", room_height + 64);
     return wall;

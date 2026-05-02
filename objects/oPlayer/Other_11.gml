@@ -79,16 +79,12 @@ takeKNOCKBACK = function(_amount, _sourceX, _knockbackH, _knockbackV) {
 
     if (getHEALTH() <= 0) {
         audio_stop_all();
-        if (SOUNDS.GAME_OVER != -1) {
-            audio_play_sound(SOUNDS.GAME_OVER, 0, false);
-        }
+        audio_play_sound(SOUNDS.GAME_OVER, 0, false);
         beginDEATH();
         return true;
     }
 
-    if (SOUNDS.LIFE_LOSS != -1) {
-        audio_play_sound(SOUNDS.LIFE_LOSS, 0, false);
-    }
+    audio_play_sound(SOUNDS.LIFE_LOSS, 0, false);
     invulFrames = INVUL_TIME;
     hitstunFrames = HITSTUN_TIME;
     hurtHsp = knockDirection * _knockbackH;
@@ -134,9 +130,7 @@ playerATTACK = function() {
     }
 
     if (didHit) {
-        if (SOUNDS.HIT_IMPACT != -1) {
-            audio_play_sound(SOUNDS.HIT_IMPACT, 0, false);
-        }
+        audio_play_sound(SOUNDS.HIT_IMPACT, 0, false);
     }
 };
 
@@ -158,9 +152,7 @@ throwHALO = function() {
         return;
     }
 
-	if (SOUNDS.HALO_THROW != -1) {
-		audio_play_sound(SOUNDS.HALO_THROW, 0, false);
-	}
+	audio_play_sound(SOUNDS.HALO_THROW, 0, false);
 
     var dir = image_xscale;
 
