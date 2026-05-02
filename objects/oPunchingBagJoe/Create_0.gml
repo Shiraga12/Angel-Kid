@@ -239,9 +239,8 @@ applyFACING_HIT = function(_range, _top, _bottom, _power) {
     }
 
     var player = collision_rectangle(leftBound, y - _top, rightBound, y + _bottom, oPlayer, false, true);
-    if (player != noone && variable_instance_exists(player, "takeDamage")) {
-        var takeDamageMethod = variable_instance_get(player, "takeDamage");
-        takeDamageMethod(_power, x, 4.5 + ((phase - 1) * 0.3), 5 + ((phase - 1) * 0.2));
+    if (player != noone) {
+        player.takeKNOCKBACK(_power, x, 4.5 + ((phase - 1) * 0.3), 5 + ((phase - 1) * 0.2));
     }
 };
 
@@ -249,9 +248,8 @@ applyRADIAL_HIT = function(_range, _top, _bottom, _power) {
     attackApplied = true;
 
     var player = collision_rectangle(x - _range, y - _top, x + _range, y + _bottom, oPlayer, false, true);
-    if (player != noone && variable_instance_exists(player, "takeDamage")) {
-        var takeDamageMethod = variable_instance_get(player, "takeDamage");
-        takeDamageMethod(_power, x, 4.75 + ((phase - 1) * 0.35), 5.5 + ((phase - 1) * 0.2));
+    if (player != noone) {
+        player.takeKNOCKBACK(_power, x, 4.75 + ((phase - 1) * 0.35), 5.5 + ((phase - 1) * 0.2));
     }
 };
 

@@ -2,9 +2,8 @@ x += projectileSpeed * facing;
 image_xscale = facing;
 
 var player = instance_place(x, y, oPlayer);
-if (player != noone && variable_instance_exists(player, "takeDamage")) {
-    var takeDamageMethod = variable_instance_get(player, "takeDamage");
-    takeDamageMethod(attackPower, x);
+if (player != noone) {
+    player.takeKNOCKBACK(attackPower, x);
     instance_destroy();
 }
 

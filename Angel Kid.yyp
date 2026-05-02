@@ -49,6 +49,7 @@
   "name":"Angel Kid",
   "resources":[
     {"id":{"name":"gameSaver","path":"objects/gameSaver/gameSaver.yy",},},
+    {"id":{"name":"objParallaxBg","path":"objects/objParallaxBg/objParallaxBg.yy",},},
     {"id":{"name":"oBlocko","path":"objects/oBlocko/oBlocko.yy",},},
     {"id":{"name":"oBoopoBobblehead","path":"objects/oBoopoBobblehead/oBoopoBobblehead.yy",},},
     {"id":{"name":"oBossArenaWall","path":"objects/oBossArenaWall/oBossArenaWall.yy",},},
@@ -61,6 +62,7 @@
     {"id":{"name":"oEnemyTemplate","path":"objects/oEnemyTemplate/oEnemyTemplate.yy",},},
     {"id":{"name":"oFinalCage","path":"objects/oFinalCage/oFinalCage.yy",},},
     {"id":{"name":"oFlyZone","path":"objects/oFlyZone/oFlyZone.yy",},},
+    {"id":{"name":"oGoldUi","path":"objects/oGoldUi/oGoldUi.yy",},},
     {"id":{"name":"oHalo","path":"objects/oHalo/oHalo.yy",},},
     {"id":{"name":"oJayCopter","path":"objects/oJayCopter/oJayCopter.yy",},},
     {"id":{"name":"oJayCopterBomb","path":"objects/oJayCopterBomb/oJayCopterBomb.yy",},},
@@ -242,10 +244,10 @@
   "resourceType":"GMProject",
   "resourceVersion":"2.0",
   "RoomOrderNodes":[
-    {"roomId":{"name":"rmSplashScreen","path":"rooms/rmSplashScreen/rmSplashScreen.yy",},},
-    {"roomId":{"name":"rmTitleScreen","path":"rooms/rmTitleScreen/rmTitleScreen.yy",},},
-    {"roomId":{"name":"rmStage1","path":"rooms/rmStage1/rmStage1.yy",},},
     {"roomId":{"name":"rmMainMenu","path":"rooms/rmMainMenu/rmMainMenu.yy",},},
+    {"roomId":{"name":"rmTitleScreen","path":"rooms/rmTitleScreen/rmTitleScreen.yy",},},
+    {"roomId":{"name":"rmSplashScreen","path":"rooms/rmSplashScreen/rmSplashScreen.yy",},},
+    {"roomId":{"name":"rmStage1","path":"rooms/rmStage1/rmStage1.yy",},},
   ],
   "templateType":"game",
   "TextureGroups":[

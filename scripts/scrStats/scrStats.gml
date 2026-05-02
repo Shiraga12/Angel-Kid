@@ -61,7 +61,7 @@ function heal(amount) {
 
 /// @desc Subtracts a specified amount of global.HEALTH from the player's total.
 /// @param {real} amount The amount of global.HEALTH to subtract.
-function damage(amount) {    global.HEALTH -= clamp(amount, 0, global.HEALTH); }
+function takeDAMAGE(amount) {    global.HEALTH -= clamp(amount, 0, global.HEALTH); }
 
 /// @desc Sets the player's global.HEALTH to a specific amount.
 /// @param {real} amount The new total global.HEALTH for the player.

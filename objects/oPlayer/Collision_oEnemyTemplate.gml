@@ -1,7 +1,7 @@
 /// COLLISION WITH oEnemyTemplate
 
 var enemy = instance_place(x, y, oEnemyTemplate);
-if (enemy == noone || !canTakeDamage()) {
+if (enemy == noone || !canTAKE_DAMAGE()) {
     exit;
 }
 
@@ -25,4 +25,4 @@ if (variable_instance_exists(enemy, "CONTACT_KNOCKBACK_V")) {
     knockbackV = variable_instance_get(enemy, "CONTACT_KNOCKBACK_V");
 }
 
-takeDamage(contactDamage, enemy.x, knockbackH, knockbackV);
+takeKNOCKBACK(contactDamage, enemy.x, knockbackH, knockbackV);
