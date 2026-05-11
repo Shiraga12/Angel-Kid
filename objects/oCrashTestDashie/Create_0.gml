@@ -64,8 +64,10 @@ stateDASH = function() {
     HSP = DASH_SPEED * facing;
 
     if (willCrash()) {
+        HSP = 0;
         stateTimer = CRASH_TIME;
         setSTATE(stateDEFEAT);
+        return;
     }
 
     move_and_collide(HSP, VSP, COLLISIONS);

@@ -23,7 +23,6 @@ else if (!hasStageIntro && STATE == stateSTAGE_INTRO) {
     stageIntroResumeState = undefined;
 }
 
-
 STATE()
 
 if (invulFrames > 0) {
