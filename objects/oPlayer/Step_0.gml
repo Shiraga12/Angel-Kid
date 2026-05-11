@@ -1,70 +1,26 @@
 // Controls
-keyLEFT = keyboard_check(vk_left);
-keyRIGHT = keyboard_check(vk_right);
-keyUP = keyboard_check(vk_up);
-keyDOWN = keyboard_check(vk_down);
+keyLEFT = keyboard_check(vk_left) || keyboard_check(ord("A"));
+keyRIGHT = keyboard_check(vk_right) || keyboard_check(ord("D"));
+keyUP = keyboard_check(vk_up) || keyboard_check(ord("W"));
+keyDOWN = keyboard_check(vk_down) || keyboard_check(ord("S"));
 keyRUN = keyboard_check(vk_shift);
 keyFLY = keyboard_check(ord("F"));
 keyHALO_PRESSED = keyboard_check_pressed(ord("X"));
 keyPUNCH = keyboard_check(ord("Z"));
 keyPUNCH_PRESSED = keyboard_check_pressed(ord("Z"));
 keyPUNCH_RELEASED = keyboard_check_released(ord("Z"));
-keyJUMP = keyboard_check_pressed(vk_space);
+keyJUMP = keyboard_check_pressed(vk_space) || keyUP;
 keyPOSE = keyboard_check_pressed(ord("C"));
 
-var hasStageIntro = layer_sequence_exists(layer, stageINTRO_SEQ);
-
-if (hasStageIntro && STATE != stateSTAGE_INTRO) {
-    stageIntroResumeState = STATE;
-    STATE = stateSTAGE_INTRO;
-}
-else if (!hasStageIntro && STATE == stateSTAGE_INTRO) {
-    STATE = is_undefined(stageIntroResumeState) ? stateFREE : stageIntroResumeState;
-    stageIntroResumeState = undefined;
-}
-
-STATE()
+state()
 
 if (invulFrames > 0) {
     invulFrames -= 1;
 }
 
-if (STATE != stateDEAD && invulFrames > 0) {
+if (state != stateDEAD && invulFrames > 0) {
     image_alpha = (((invulFrames div 4) mod 2) == 0) ? 0.35 : 1;
 }
 else {
     image_alpha = 1;
-}
-
-// Parallax background logic
-if layer_exists("BackgroundA") {
-    background_a = layer_get_id("BackgroundA");
-}
-if layer_exists("BackgroundB") {
-    background_b = layer_get_id("BackgroundB");
-}
-if layer_exists("BackgroundC") {
-    background_c = layer_get_id("BackgroundC");
-}
-if (background_a != -1) {
-    layer_x(background_a, camera_get_view_x(view_camera[0]) / 2);
-    layer_y(background_a, camera_get_view_y(view_camera[0]) / 2);
-}
-if (background_b != -1) {
-    layer_x(background_b, camera_get_view_x(view_camera[0]) / 3);
-    layer_y(background_b, camera_get_view_y(view_camera[0]) / 3);
-}
-if (background_c != -1) {
-    layer_x(background_c, camera_get_view_x(view_camera[0]) / 4);
-    layer_y(background_c, camera_get_view_y(view_camera[0]) / 4);
-}
-
-if hasStageIntro {
-    layer_sequence_x(stageINTRO_SEQ, camera_get_view_x(view_camera[0]) + 342 / 2);
-    layer_sequence_y(stageINTRO_SEQ, camera_get_view_y(view_camera[0]) + 192 / 2);
-    layer_sequence_xscale(stageINTRO_SEQ, 1 / 3);
-    layer_sequence_yscale(stageINTRO_SEQ, 1 / 3);
-}
-if hasStageIntro && layer_sequence_is_finished(stageINTRO_SEQ) {
-    layer_sequence_destroy(stageINTRO_SEQ);
 }

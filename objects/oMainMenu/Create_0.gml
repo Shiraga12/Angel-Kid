@@ -1,10 +1,8 @@
 /// @desc Main menu using the sMM_* sprite set.
 
-var mainMenuMusic = asset_get_index("sndMainMenu");
+var mainMenuMusic = sndMainMenu
 audio_stop_all();
-if (mainMenuMusic != -1) {
-    audio_play_sound(mainMenuMusic, 0, true);
-}
+audio_play_sound(mainMenuMusic, 0, true);
 
 menuItems = [
     { sprite: sMM_AngelMode, enabled: true, targetRoom: rmStage1, notice: "" },
@@ -32,10 +30,8 @@ activateSELECTED = function() {
     var item = menuItems[selectedIndex];
 
     if (item.sprite == sMM_Options) {
-        var optionsMenuSound = asset_get_index("sndOptionsMenu");
-        if (optionsMenuSound != -1) {
-            audio_play_sound(optionsMenuSound, 0, false);
-        }
+        var optionsMenuSound = sndOptionsMenu;
+        audio_play_sound(optionsMenuSound, 0, false);
     }
 
     if (item.enabled) {

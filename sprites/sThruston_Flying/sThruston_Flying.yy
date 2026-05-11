@@ -29,7 +29,7 @@
   "origin":4,
   "parent":{
     "name":"Thruston",
-    "path":"folders/NPCS/Thruston.yy",
+    "path":"folders/NPCS/Enemies/Thruston.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

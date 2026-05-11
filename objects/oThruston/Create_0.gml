@@ -23,49 +23,9 @@ COLLISIONS = [
     layer_tilemap_get_id("tmSOLID")
 ];
 
-HSP = 0;
-VSP = 0;
-GRV = GRAVITY_GROUND;
-STATIC = false;
-
-facing = 1;
-isDefeated = false;
 stateTimer = IDLE_TIME;
 
-setSTATE = function(_state) {
-    if (STATE != _state) {
-        STATE = _state;
-        image_index = 0;
-    }
-};
-
-takeHit = method(id, function(_power, _sourceX) {
-    if (isDefeated) {
-        return;
-    }
-
-    HP -= _power;
-    facing = sign(x - _sourceX);
-    if (facing == 0) {
-        facing = 1;
-    }
-
-    var enemyHurtSound = asset_get_index((HP <= 0) ? "sndEnemyHurt2" : "sndEnemyHurt");
-    if (enemyHurtSound != -1) {
-        audio_play_sound(enemyHurtSound, 0, false);
-    }
-
-    if (HP <= 0) {
-        isDefeated = true;
-        setSTATE(stateDEFEAT);
-    }
-});
-
 playerDetected = function() {
-    if (!instance_exists(oPlayer)) {
-        return false;
-    }
-
     var player = instance_nearest(x, y, oPlayer);
     if (!instance_exists(player)) {
         return false;
@@ -86,14 +46,7 @@ playerDetected = function() {
     return true;
 };
 
-shouldTurnAround = function() {
-    var wallAhead = place_meeting(x + (facing * 8), y, COLLISIONS);
-    var floorAhead = place_meeting(x + (facing * EDGE_CHECK), y + 12, COLLISIONS);
-
-    return wallAhead || !floorAhead;
-};
-
-stateIDLE = function() {
+stateIDLE = new stateFUNCS(function() {
     GRV = GRAVITY_GROUND;
     HSP = 0;
     image_xscale = facing;
@@ -113,9 +66,9 @@ stateIDLE = function() {
     if (stateTimer <= 0) {
         setSTATE(stateWHEELS);
     }
-};
+});
 
-stateWHEELS = function() {
+stateWHEELS = new stateFUNCS(function() {
     GRV = GRAVITY_GROUND;
 
     if (sprite_index != SPRITES.WHEELS) {
@@ -123,7 +76,7 @@ stateWHEELS = function() {
         image_index = 0;
     }
 
-    if (shouldTurnAround()) {
+    if (shouldTURN_AROUND()) {
         facing *= -1;
         stateTimer = IDLE_TIME;
         setSTATE(stateIDLE);
@@ -139,9 +92,9 @@ stateWHEELS = function() {
 
     HSP = MOVE_SPEED * facing;
     image_xscale = facing;
-};
+});
 
-stateLAUNCH = function() {
+stateLAUNCH = new stateFUNCS(function() {
     GRV = GRAVITY_GROUND;
     HSP = 0;
     image_xscale = facing;
@@ -150,10 +103,8 @@ stateLAUNCH = function() {
         sprite_index = SPRITES.LAUNCH;
         image_index = 0;
 
-        var thrustonHiHoSound = asset_get_index("sndThrustonHiHo");
-        if (thrustonHiHoSound != -1) {
-            audio_play_sound(thrustonHiHoSound, 0, false);
-        }
+        var thrustonHiHoSound = sndThrustonHiHo;
+        audio_play_sound(thrustonHiHoSound, 0, false);
     }
 
     stateTimer -= 1;
@@ -161,9 +112,9 @@ stateLAUNCH = function() {
         VSP = 0;
         setSTATE(stateFLY);
     }
-};
+});
 
-stateFLY = function() {
+stateFLY = new stateFUNCS(function() {
     GRV = GRAVITY_FLY;
     VSP = 0;
     HSP = FLY_SPEED * facing;
@@ -178,9 +129,9 @@ stateFLY = function() {
         isDefeated = true;
         setSTATE(stateDEFEAT);
     }
-};
+});
 
-stateDEFEAT = function() {
+stateDEFEAT = new stateFUNCS(function() {
     HSP = 0;
     image_xscale = facing;
 
@@ -195,6 +146,6 @@ stateDEFEAT = function() {
     if (y > room_height + sprite_height) {
         instance_destroy();
     }
-};
+});
 
-STATE = stateIDLE;
+state = stateIDLE;

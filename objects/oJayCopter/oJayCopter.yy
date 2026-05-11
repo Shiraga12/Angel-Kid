@@ -3,16 +3,20 @@
   "%Name":"oJayCopter",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
   "name":"oJayCopter",
-  "overriddenProperties":[],
+  "overriddenProperties":[
+    {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"oNPCTemplate","path":"objects/oNPCTemplate/oNPCTemplate.yy",},"propertyId":{"name":"GRV","path":"objects/oNPCTemplate/oNPCTemplate.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"0",},
+  ],
   "parent":{
     "name":"Jay Copter",
     "path":"folders/NPCS/Enemies/Jay Copter.yy",
   },
-  "parentObjectId":null,
+  "parentObjectId":{
+    "name":"oEnemyTemplate",
+    "path":"objects/oEnemyTemplate/oEnemyTemplate.yy",
+  },
   "persistent":false,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,

@@ -28,72 +28,10 @@ VSP = 0;
 GRV = 0.45;
 STATIC = false;
 
-facing = 1;
 stateTimer = IDLE_TIME;
 HP = 2;
-HIT_TIME = 10;
-isDefeated = false;
 
-setSTATE = function(_state) {
-	if (STATE != _state) {
-		STATE = _state;
-		image_index = 0;
-	}
-};
-
-takeHit = method(id, function(_power, _sourceX) {
-	if (isDefeated) {
-		return;
-	}
-
-	HP -= _power;
-	facing = sign(x - _sourceX);
-	if (facing == 0) {
-		facing = 1;
-	}
-
-	var enemyHurtSound = asset_get_index((HP <= 0) ? "sndEnemyHurt2" : "sndEnemyHurt");
-	if (enemyHurtSound != -1) {
-		audio_play_sound(enemyHurtSound, 0, false);
-	}
-
-	if (HP <= 0) {
-		isDefeated = true;
-		setSTATE(stateDEFEAT);
-	}
-	else {
-		stateTimer = HIT_TIME;
-		setSTATE(stateHIT);
-	}
-});
-
-playerAhead = function() {
-	var offsetX = facing * ATTACK.RANGE;
-	var leftBound = x;
-	var rightBound = x;
-
-	if (offsetX < 0) {
-		leftBound += offsetX;
-	}
-	else {
-		rightBound += offsetX;
-	}
-
-	return collision_rectangle(
-		leftBound, y - ATTACK.HEIGHT,
-		rightBound, y + ATTACK.HEIGHT,
-		oPlayer, false, true
-	) != noone;
-};
-
-shouldTurnAround = function() {
-	var wallAhead = place_meeting(x + (facing * 8), y, COLLISIONS);
-	var floorAhead = place_meeting(x + (facing * EDGE_CHECK), y + 12, COLLISIONS);
-
-	return wallAhead || !floorAhead;
-};
-
-stateIDLE = function() {
+stateIDLE = new stateFUNCS(function() {
 	HSP = 0;
 	image_xscale = facing;
 
@@ -102,7 +40,7 @@ stateIDLE = function() {
 		image_index = 0;
 	}
 
-	if (playerAhead()) {
+	if (canSEE_PLAYER()) {
 		setSTATE(stateATTACK);
 		return;
 	}
@@ -112,15 +50,15 @@ stateIDLE = function() {
 		stateTimer = WALK_TIME;
 		setSTATE(stateWALK);
 	}
-};
+});
 
-stateWALK = function() {
+stateWALK = new stateFUNCS(function() {
 	if (sprite_index != SPRITES.WALK) {
 		sprite_index = SPRITES.WALK;
 		image_index = 0;
 	}
 
-	if (shouldTurnAround()) {
+	if (shouldTURN_AROUND()) {
 		facing *= -1;
 		stateTimer = IDLE_TIME;
 		setSTATE(stateIDLE);
@@ -130,7 +68,7 @@ stateWALK = function() {
 	HSP = MOVE_SPEED * facing;
 	image_xscale = facing;
 
-	if (playerAhead()) {
+	if (canSEE_PLAYER()) {
 		setSTATE(stateATTACK);
 		return;
 	}
@@ -140,9 +78,9 @@ stateWALK = function() {
 		stateTimer = IDLE_TIME;
 		setSTATE(stateIDLE);
 	}
-};
+});
 
-stateATTACK = function() {
+stateATTACK = new stateFUNCS(function() {
 	HSP = 0;
 	image_xscale = facing;
 
@@ -155,9 +93,9 @@ stateATTACK = function() {
 		stateTimer = IDLE_TIME;
 		setSTATE(stateIDLE);
 	}
-};
+});
 
-stateHIT = function() {
+stateHIT = new stateFUNCS(function() {
 	HSP = 0;
 	image_xscale = facing;
 
@@ -171,9 +109,9 @@ stateHIT = function() {
 		stateTimer = IDLE_TIME;
 		setSTATE(stateIDLE);
 	}
-};
+});
 
-stateDEFEAT = function() {
+stateDEFEAT = new stateFUNCS(function() {
     if (!isDefeated) {
         isDefeated = true;
         HSP = -facing * 2.5;
@@ -194,7 +132,6 @@ stateDEFEAT = function() {
     x += HSP;
     y += VSP;
     VSP += GRV;
-};
+});
 
-STATE = stateIDLE;
-
+state = stateIDLE;

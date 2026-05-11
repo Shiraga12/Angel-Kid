@@ -2,9 +2,8 @@ VSP += GRV;
 y += VSP;
 
 var player = instance_place(x, y, oPlayer);
-if (player != noone && variable_instance_exists(player, "takeDamage")) {
-    var takeDamageMethod = variable_instance_get(player, "takeDamage");
-    takeDamageMethod(ATTACK_POWER, x);
+if (player != noone) {
+    player.takeKNOCKBACK(ATTACK_POWER, x);
     instance_destroy();
 }
 

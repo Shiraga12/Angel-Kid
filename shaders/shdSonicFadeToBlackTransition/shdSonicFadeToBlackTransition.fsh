@@ -4,7 +4,7 @@ varying vec4 v_vColour;
 uniform sampler2D u_toTexture;
 uniform float u_progress;
 
-const vec3 offsets = normalize(vec3(5.0, 2.0, 1.0));
+#define offsets normalize(vec3(5.0, 2.0, 1.0))
 
 vec3 sonicFadeToBlack(vec3 color, float amount) {
     float t = smoothstep(0.0, 1.0, clamp(amount, 0.0, 1.0));

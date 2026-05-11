@@ -1,3 +1,1 @@
-///
-
-STATE()
+state.runSTEP();

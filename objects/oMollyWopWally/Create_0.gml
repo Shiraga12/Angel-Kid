@@ -21,47 +21,9 @@ HSP = 0;
 VSP = 0;
 
 HP = 4;
-facing = 1;
-isDefeated = false;
 stateTimer = HOP_WAIT;
 
-setSTATE = function(_state) {
-    if (STATE != _state) {
-        STATE = _state;
-        image_index = 0;
-    }
-};
-
-takeHit = method(id, function(_power, _sourceX) {
-    if (isDefeated) {
-        return;
-    }
-
-    HP -= _power;
-    facing = sign(x - _sourceX);
-    if (facing == 0) {
-        facing = 1;
-    }
-
-    var enemyHurtSound = asset_get_index((HP <= 0) ? "sndEnemyHurt2" : "sndEnemyHurt");
-    if (enemyHurtSound != -1) {
-        audio_play_sound(enemyHurtSound, 0, false);
-    }
-
-    if (HP <= 0) {
-        isDefeated = true;
-        setSTATE(stateDEFEAT);
-    }
-});
-
-shouldTurnAround = function() {
-    var wallAhead = place_meeting(x + (facing * 8), y, COLLISIONS);
-    var floorAhead = place_meeting(x + (facing * EDGE_CHECK), y + 12, COLLISIONS);
-
-    return wallAhead || !floorAhead;
-};
-
-stateIDLE = function() {
+stateIDLE = new stateFUNCS(function() {
     HSP = 0;
     image_xscale = facing;
 
@@ -77,7 +39,7 @@ stateIDLE = function() {
 
     stateTimer -= 1;
     if (stateTimer <= 0) {
-        if (shouldTurnAround()) {
+        if (shouldTURN_AROUND()) {
             facing *= -1;
         }
 
@@ -85,9 +47,9 @@ stateIDLE = function() {
         VSP = -HOP_STRENGTH;
         setSTATE(stateJUMP);
     }
-};
+});
 
-stateJUMP = function() {
+stateJUMP = new stateFUNCS(function() {
     HSP = HOP_SPEED * facing;
     image_xscale = facing;
 
@@ -101,9 +63,9 @@ stateJUMP = function() {
         stateTimer = HOP_WAIT;
         setSTATE(stateIDLE);
     }
-};
+});
 
-stateDEFEAT = function() {
+stateDEFEAT = new stateFUNCS(function() {
     HSP = 0;
     image_xscale = facing;
 
@@ -115,6 +77,6 @@ stateDEFEAT = function() {
     if (image_index >= sprite_get_number(sprite_index) - 1) {
         instance_destroy();
     }
-};
+});
 
-STATE = stateIDLE;
+state = stateIDLE;
